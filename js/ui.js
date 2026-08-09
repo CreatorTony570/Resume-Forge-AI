@@ -1,6 +1,6 @@
 /* ResumeForge AI — UI Utilities */
 
-const RF = window.RF || {};
+window.RF = window.RF || {}; var RF = window.RF;
 
 RF.notify = function(msg, type) {
   type = type || 'info';

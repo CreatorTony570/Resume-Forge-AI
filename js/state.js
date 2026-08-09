@@ -1,6 +1,6 @@
 /* ResumeForge AI — State Management */
 
-const RF = window.RF || {};
+window.RF = window.RF || {}; var RF = window.RF;
 
 RF.State = {
   page: 'dashboard',

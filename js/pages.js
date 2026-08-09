@@ -1,6 +1,6 @@
 /* ResumeForge AI — Page Renderers */
 
-const RF = window.RF || {};
+window.RF = window.RF || {}; var RF = window.RF;
 
 // ===== DASHBOARD =====
 RF.renderDashboard = function() {

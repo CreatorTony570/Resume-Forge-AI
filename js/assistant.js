@@ -1,6 +1,6 @@
 /* ResumeForge AI — CareerAI Assistant, Command Palette & Usage */
 
-const RF = window.RF || {};
+window.RF = window.RF || {}; var RF = window.RF;
 
 // === AI ASSISTANT ===
 RF.toggleAIPanel = function() {

@@ -1,6 +1,6 @@
 /* ResumeForge AI — Model Center & API Keys */
 
-const RF = window.RF || {};
+window.RF = window.RF || {}; var RF = window.RF;
 
 // === MODEL CENTER ===
 RF.renderModelCenter = function() {

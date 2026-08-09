@@ -1,6 +1,6 @@
 /* ResumeForge AI — Configuration & Constants */
 
-const RF = window.RF || {};
+window.RF = window.RF || {}; var RF = window.RF;
 
 RF.PROVIDERS = {
   openai: {

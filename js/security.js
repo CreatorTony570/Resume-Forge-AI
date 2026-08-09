@@ -8,7 +8,7 @@
    - Safe DOM injection
    ============================================================ */
 
-const RF = window.RF || {};
+window.RF = window.RF || {}; var RF = window.RF;
 
 /* ---------- HTML Sanitization ---------- */
 RF.Security = {

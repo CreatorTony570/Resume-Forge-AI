@@ -4,7 +4,7 @@
    Falls back through configured providers on failure.
    ============================================================ */
 
-const RF = window.RF || {};
+window.RF = window.RF || {}; var RF = window.RF;
 
 /* ---------- Prompt Templates ---------- */
 RF.Prompts = {
