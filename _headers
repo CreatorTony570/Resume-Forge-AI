@@ -13,7 +13,7 @@
   Cache-Control: public, max-age=86400, immutable
 
 /js/*
-  Cache-Control: public, max-age=86400, immutable
+  Cache-Control: public, max-age=0, must-revalidate
 
 /assets/*
   Cache-Control: public, max-age=604800, immutable
