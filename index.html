@@ -7,8 +7,6 @@
 <meta name="description" content="AI-powered resume builder, ATS scanner, job matcher, and career intelligence platform. Build resumes that get read — optimized to get hired.">
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon.png">
 <link rel="apple-touch-icon" sizes="192x192" href="/assets/icon-192.png">
-<!-- Umami Analytics — privacy-friendly, GDPR-compliant, open-source -->
-<!-- Replace data-website-id with your own from https://umami.is -->
 <script defer src="https://cloud.umami.is/script.js" data-website-id="00000000-0000-0000-0000-000000000000" data-domains="resumeforge.ai"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,9 +19,10 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
+
+<!-- ===== LANDING PAGE ===== -->
 <div class="landing-page" id="landingPage">
   <div class="landing-bg"><div id="three-bg"></div></div>
-
   <nav class="landing-nav">
     <div class="landing-logo">
       <div class="landing-logo-icon">R</div>
@@ -33,32 +32,24 @@
       <li><a href="#features">Features</a></li>
       <li><a href="#how">How It Works</a></li>
       <li><a href="#privacy">Privacy</a></li>
-      <li><a href="#" onclick="document.getElementById('landingPage').style.display='none';document.getElementById('appShell').classList.add('active');RF.navigate('dashboard');return false">Dashboard</a></li>
+      <li><a href="#" onclick="RF.enterApp('dashboard');return false">Dashboard</a></li>
     </ul>
-    <button class="btn btn-primary btn-sm landing-nav-cta" onclick="document.getElementById('landingPage').style.display='none';document.getElementById('appShell').classList.add('active');RF.navigate('dashboard');return false">
+    <button class="btn btn-primary btn-sm landing-nav-cta" onclick="RF.enterApp('dashboard');return false">
       Launch App
     </button>
   </nav>
-
   <section class="hero-section">
     <div class="hero-content">
       <div class="hero-badge">✦ AI-POWERED CAREER INTELLIGENCE</div>
       <h1 class="hero-title">Build a Resume <span class="text-gradient">Engineered</span> for Your Next Opportunity.</h1>
       <p class="hero-subtitle">ResumeForge AI combines advanced artificial intelligence with resume engineering best practices. Create, analyze, optimize, and match resumes with precision — all powered by AI models <strong>you control</strong>.</p>
       <div class="hero-actions">
-        <button class="btn btn-primary btn-lg" onclick="document.getElementById('landingPage').style.display='none';document.getElementById('appShell').classList.add('active');RF.navigate('resume-builder');return false">
-          ✦ Start Building Resume
-        </button>
-        <button class="btn btn-glass btn-lg" onclick="document.getElementById('landingPage').style.display='none';document.getElementById('appShell').classList.add('active');RF.navigate('resume-review');return false">
-          Analyze My Resume
-        </button>
-        <button class="btn btn-outline btn-lg" onclick="document.getElementById('landingPage').style.display='none';document.getElementById('appShell').classList.add('active');setTimeout(function(){RF.openAIPanel();},400);return false">
-          Try AI Assistant
-        </button>
+        <button class="btn btn-primary btn-lg" onclick="RF.enterApp('resume-builder');return false">✦ Start Building Resume</button>
+        <button class="btn btn-glass btn-lg" onclick="RF.enterApp('resume-review');return false">Analyze My Resume</button>
+        <button class="btn btn-outline btn-lg" onclick="RF.enterApp('dashboard');setTimeout(function(){RF.openAIPanel();},200);return false">Try AI Assistant</button>
       </div>
     </div>
   </section>
-
   <section class="landing-features" id="features">
     <div class="landing-feature-card"><div class="feature-icon">📄</div><h3>Resume Builder</h3><p>Professional resume creation with AI-assisted content, live preview, and multiple premium templates.</p></div>
     <div class="landing-feature-card"><div class="feature-icon">🔍</div><h3>ATS Scanner</h3><p>Advanced ATS analysis shows exactly how your resume performs against applicant tracking systems.</p></div>
@@ -67,16 +58,396 @@
     <div class="landing-feature-card"><div class="feature-icon">🔐</div><h3>Bring Your Own Key</h3><p>Use your own API keys. Full control over AI providers, models, and data privacy. No hidden costs.</p></div>
     <div class="landing-feature-card"><div class="feature-icon">⚡</div><h3>Smart Routing</h3><p>Automatic model selection with intelligent fallback. The right AI for every task, every time.</p></div>
   </section>
-
   <footer class="landing-footer text-center p-8 text-muted text-sm" style="position:relative;z-index:10;border-top:1px solid var(--glass-border)">
-    <p>© 2026 ResumeForge AI — Intelligent Resume Engineering & Career Optimization. Built with care for professionals worldwide.</p>
+    <p>© 2026 ResumeForge AI — Intelligent Resume Engineering &amp; Career Optimization. Built with care for professionals worldwide.</p>
   </footer>
 </div>
 
-<!-- The app shell is loaded async -->
-<div class="app-shell" id="appShell"></div>
+<!-- ===== APP SHELL (inlined — no fetch needed) ===== -->
+<div class="app-shell" id="appShell">
 
-<!-- Floating AI Assistant -->
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="landing-logo-icon" style="width:30px;height:30px;font-size:0.85rem">R</div>
+      <span class="sidebar-logo">ResumeForge AI</span>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section"><div class="nav-section-title">Main</div>
+        <button class="nav-item active" data-page="dashboard"><span class="nav-icon">⊞</span> Dashboard</button>
+        <button class="nav-item" data-page="resume-builder"><span class="nav-icon">📄</span> Resume Builder</button>
+        <button class="nav-item" data-page="resume-review"><span class="nav-icon">🔍</span> Resume Review</button>
+        <button class="nav-item" data-page="ats-scanner"><span class="nav-icon">📊</span> ATS Scanner</button>
+        <button class="nav-item" data-page="job-matcher"><span class="nav-icon">🎯</span> Job Matcher</button>
+      </div>
+      <div class="nav-section"><div class="nav-section-title">Career Tools</div>
+        <button class="nav-item" data-page="resume-optimizer"><span class="nav-icon">⚡</span> Resume Optimizer</button>
+        <button class="nav-item" data-page="cover-letter"><span class="nav-icon">✉️</span> Cover Letter</button>
+        <button class="nav-item" data-page="job-analyzer"><span class="nav-icon">📋</span> Job Analyzer</button>
+        <button class="nav-item" data-page="skills-analyzer"><span class="nav-icon">🧩</span> Skills Analyzer</button>
+        <button class="nav-item" data-page="interview-prep"><span class="nav-icon">🎤</span> Interview Prep</button>
+        <button class="nav-item" data-page="linkedin-optimizer"><span class="nav-icon">💼</span> LinkedIn Optimizer</button>
+      </div>
+      <div class="nav-section"><div class="nav-section-title">AI &amp; Models</div>
+        <button class="nav-item" data-page="ai-model-center"><span class="nav-icon">🧠</span> AI Model Center</button>
+        <button class="nav-item" data-page="api-keys"><span class="nav-icon">🔑</span> API Key Manager</button>
+        <button class="nav-item" data-page="usage-analytics"><span class="nav-icon">📈</span> Usage &amp; Analytics</button>
+      </div>
+      <div class="nav-section"><div class="nav-section-title">More</div>
+        <button class="nav-item" data-page="resume-templates"><span class="nav-icon">🎨</span> Resume Templates</button>
+        <button class="nav-item" data-page="resume-versions"><span class="nav-icon">🔄</span> Resume Versions</button>
+        <button class="nav-item" data-page="settings"><span class="nav-icon">⚙️</span> Settings</button>
+        <button class="nav-item" data-page="privacy-security"><span class="nav-icon">🛡️</span> Privacy &amp; Security</button>
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="ai-status" id="sidebarAiStatus">
+        <span class="ai-status-dot warn" id="aiStatusDot"></span>
+        <span id="aiStatusText">AI: Not Configured</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-area">
+    <header class="top-bar">
+      <div class="flex items-center gap-3">
+        <button class="mobile-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+        <span class="top-bar-title" id="topBarTitle">Dashboard</span>
+      </div>
+      <div class="top-bar-right">
+        <button class="top-bar-btn" onclick="RF.navigate('ai-model-center')" title="AI Models">🧠</button>
+        <button class="top-bar-btn" onclick="RF.openCommandPalette()" title="Command Palette (Ctrl+K)">⌘K</button>
+      </div>
+    </header>
+
+    <div class="page-area">
+
+      <!-- ===== DASHBOARD ===== -->
+      <div class="page-panel active" id="page-dashboard">
+        <div class="grid grid-4 mb-6">
+          <div class="card stat-card"><div class="score-ring"><canvas id="healthScoreCanvas"></canvas><div class="score-ring-value" id="healthScoreValue">--</div></div><div class="stat-label">Resume Health</div></div>
+          <div class="card stat-card"><div class="stat-value gold" id="statAtsScore">--</div><div class="stat-label">ATS Score</div></div>
+          <div class="card stat-card"><div class="stat-value" id="statResumeCount">0</div><div class="stat-label">Resumes</div></div>
+          <div class="card stat-card"><div class="stat-value" id="statJobMatch">--</div><div class="stat-label">Best Match</div></div>
+        </div>
+        <div class="grid grid-2 mb-6">
+          <div class="card"><div class="card-header"><span class="card-title">Quick Actions</span></div>
+            <div class="grid grid-2" style="gap:0.65rem">
+              <button class="btn btn-primary btn-sm" onclick="RF.navigate('resume-builder')">📄 Build Resume</button>
+              <button class="btn btn-glass btn-sm" onclick="RF.navigate('resume-review')">🔍 Review Resume</button>
+              <button class="btn btn-glass btn-sm" onclick="RF.navigate('ats-scanner')">📊 Scan ATS</button>
+              <button class="btn btn-glass btn-sm" onclick="RF.navigate('job-matcher')">🎯 Match Job</button>
+              <button class="btn btn-glass btn-sm" onclick="RF.navigate('resume-optimizer')">⚡ Optimize</button>
+              <button class="btn btn-glass btn-sm" onclick="RF.navigate('cover-letter')">✉️ Cover Letter</button>
+              <button class="btn btn-outline btn-sm" onclick="RF.openAIPanel()">🤖 Ask AI</button>
+              <button class="btn btn-glass btn-sm" onclick="RF.navigate('ai-model-center')">🧠 Models</button>
+            </div>
+          </div>
+          <div class="card"><div class="card-header"><span class="card-title">AI Insights</span></div>
+            <div id="dashboardInsights"><p class="text-muted text-sm">Configure an AI provider to get personalized insights.</p></div>
+          </div>
+        </div>
+        <div class="grid grid-2">
+          <div class="card"><div class="card-header"><span class="card-title">Recent Resumes</span><button class="btn btn-glass btn-sm" onclick="RF.navigate('resume-builder')">+ New</button></div>
+            <div id="recentResumes"><div class="empty-state"><div class="empty-state-icon">📄</div><div class="empty-state-title">No resumes yet</div><div class="empty-state-desc">Create your first resume or upload an existing one.</div></div></div>
+          </div>
+          <div class="card"><div class="card-header"><span class="card-title">Recent Jobs</span><button class="btn btn-glass btn-sm" onclick="RF.navigate('job-analyzer')">+ Analyze</button></div>
+            <div id="recentJobs"><div class="empty-state"><div class="empty-state-icon">📋</div><div class="empty-state-title">No jobs analyzed</div><div class="empty-state-desc">Paste a job description to get started.</div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== RESUME BUILDER ===== -->
+      <div class="page-panel" id="page-resume-builder">
+        <div class="flex items-center justify-between mb-6">
+          <h2 style="font-size:1.2rem;font-weight:700">Resume Builder</h2>
+          <div class="flex gap-2">
+            <button class="btn btn-glass btn-sm" onclick="RF.exportResume()">📥 Export</button>
+            <button class="btn btn-outline btn-sm" onclick="RF.saveResume()">💾 Save</button>
+          </div>
+        </div>
+        <div class="builder-layout">
+          <div class="builder-panel" style="max-height:calc(100vh - 180px);overflow-y:auto">
+            <div class="builder-section">
+              <div class="builder-section-header"><span class="builder-section-title">Personal Info</span></div>
+              <div class="form-group"><label class="form-label">Full Name</label><input class="form-input" id="resumeFullName" placeholder="John Doe" oninput="RF.updateResumePreview()"></div>
+              <div class="form-group"><label class="form-label">Professional Title</label><input class="form-input" id="resumeTitle" placeholder="Senior Software Engineer" oninput="RF.updateResumePreview()"></div>
+              <div class="form-row">
+                <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="resumeEmail" type="email" placeholder="john@example.com" oninput="RF.updateResumePreview()"></div>
+                <div class="form-group"><label class="form-label">Phone</label><input class="form-input" id="resumePhone" placeholder="+1 (555) 000-0000" oninput="RF.updateResumePreview()"></div>
+              </div>
+              <div class="form-row">
+                <div class="form-group"><label class="form-label">Location</label><input class="form-input" id="resumeLocation" placeholder="San Francisco, CA" oninput="RF.updateResumePreview()"></div>
+                <div class="form-group"><label class="form-label">LinkedIn</label><input class="form-input" id="resumeLinkedin" placeholder="linkedin.com/in/..." oninput="RF.updateResumePreview()"></div>
+              </div>
+              <div class="form-row">
+                <div class="form-group"><label class="form-label">GitHub</label><input class="form-input" id="resumeGithub" placeholder="github.com/..." oninput="RF.updateResumePreview()"></div>
+                <div class="form-group"><label class="form-label">Portfolio</label><input class="form-input" id="resumePortfolio" placeholder="yoursite.com" oninput="RF.updateResumePreview()"></div>
+              </div>
+            </div>
+            <div class="builder-section">
+              <div class="builder-section-header"><span class="builder-section-title">Professional Summary</span><button class="btn btn-outline btn-sm" onclick="RF.generateSummary()">🤖 Generate</button></div>
+              <textarea class="form-textarea" id="resumeSummary" placeholder="Brief professional summary..." style="min-height:75px" oninput="RF.updateResumePreview()"></textarea>
+            </div>
+            <div class="builder-section">
+              <div class="builder-section-header"><span class="builder-section-title">Work Experience</span><button class="btn btn-outline btn-sm" onclick="RF.addExperience()">+ Add</button></div>
+              <div id="experienceEntries"></div>
+            </div>
+            <div class="builder-section">
+              <div class="builder-section-header"><span class="builder-section-title">Education</span><button class="btn btn-outline btn-sm" onclick="RF.addEducation()">+ Add</button></div>
+              <div id="educationEntries"></div>
+            </div>
+            <div class="builder-section">
+              <div class="builder-section-header"><span class="builder-section-title">Skills &amp; Certs</span></div>
+              <div class="form-group"><label class="form-label">Technical Skills</label><input class="form-input" id="resumeSkills" placeholder="Python, JavaScript, React, AWS..." oninput="RF.updateResumePreview()"></div>
+              <div class="form-group"><label class="form-label">Certifications</label><input class="form-input" id="resumeCertifications" placeholder="AWS Solutions Architect, PMP..." oninput="RF.updateResumePreview()"></div>
+            </div>
+            <div class="builder-section">
+              <div class="builder-section-header"><span class="builder-section-title">Projects</span><button class="btn btn-outline btn-sm" onclick="RF.addProject()">+ Add</button></div>
+              <div id="projectEntries"></div>
+            </div>
+          </div>
+          <div class="builder-preview" id="resumePreview">
+            <div id="resumePreviewContent" style="font-family:Georgia,serif;color:#1a1a1a">
+              <div style="text-align:center;padding:3rem 2rem;color:#999">Your resume preview will appear here as you fill in details...</div>
+            </div>
+          </div>
+          <div class="builder-panel ai-panel-right" style="max-height:calc(100vh - 180px);overflow-y:auto">
+            <div class="builder-section-header"><span class="builder-section-title">AI Suggestions</span></div>
+            <div class="text-sm text-muted">Configure an AI provider to get real-time resume improvement suggestions.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== RESUME REVIEW ===== -->
+      <div class="page-panel" id="page-resume-review">
+        <h2 style="margin-bottom:1.5rem;font-size:1.2rem">Resume Review Engine</h2>
+        <div class="card mb-6">
+          <div class="upload-zone" onclick="document.getElementById('reviewFileInput').click()">
+            <div class="upload-icon">📤</div><div class="upload-text">Upload your resume for analysis</div>
+            <div class="upload-hint">PDF, DOCX, or TXT — Max 10MB</div>
+            <input type="file" id="reviewFileInput" accept=".pdf,.docx,.txt" style="display:none" onchange="RF.handleReviewUpload(event)">
+          </div>
+        </div>
+        <div class="grid grid-2" id="reviewResults" style="display:none">
+          <div class="card"><div class="card-title mb-4">Content Analysis</div><div id="contentAnalysis"></div></div>
+          <div class="card"><div class="card-title mb-4">Structure &amp; Formatting</div><div id="structureAnalysis"></div></div>
+          <div class="card"><div class="card-title mb-4">Language Quality</div><div id="languageAnalysis"></div></div>
+          <div class="card"><div class="card-title mb-4">ATS Compatibility</div><div id="atsAnalysis"></div></div>
+        </div>
+      </div>
+
+      <!-- ===== ATS SCANNER ===== -->
+      <div class="page-panel" id="page-ats-scanner">
+        <div class="flex items-center justify-between mb-6">
+          <h2 style="font-size:1.2rem">ATS Scanner</h2>
+          <button class="btn btn-primary btn-sm" onclick="RF.runATSScan()">🔍 Run Scan</button>
+        </div>
+        <div class="grid grid-2">
+          <div class="card stat-card"><div class="score-ring"><canvas id="atsScoreCanvas"></canvas><div class="score-ring-value" id="atsOverallScore">--</div></div><div class="stat-label">Overall ATS Score</div></div>
+          <div class="card"><div class="card-title mb-4">Score Breakdown</div><div id="atsBreakdown"><p class="text-muted text-sm">Run the scan to see results.</p></div></div>
+        </div>
+      </div>
+
+      <!-- ===== JOB MATCHER ===== -->
+      <div class="page-panel" id="page-job-matcher">
+        <div class="flex items-center justify-between mb-6"><h2 style="font-size:1.2rem">Job Matcher</h2><button class="btn btn-primary btn-sm" onclick="RF.runJobMatch()">🎯 Match Now</button></div>
+        <div class="grid grid-2 mb-6">
+          <div class="card"><div class="card-title mb-3">Resume</div><textarea class="form-textarea" id="matcherResume" placeholder="Paste your resume here..." style="min-height:180px"></textarea></div>
+          <div class="card"><div class="card-title mb-3">Job Description</div><textarea class="form-textarea" id="matcherJobDesc" placeholder="Paste the job description..." style="min-height:180px"></textarea></div>
+        </div>
+        <div class="grid grid-2" id="matchResults" style="display:none">
+          <div class="card stat-card"><div class="stat-value gold" id="matchScore">--</div><div class="stat-label">Match Score</div></div>
+          <div class="card"><div id="matchBreakdown"></div></div>
+        </div>
+      </div>
+
+      <!-- ===== RESUME OPTIMIZER ===== -->
+      <div class="page-panel" id="page-resume-optimizer">
+        <div class="flex items-center justify-between mb-6"><h2 style="font-size:1.2rem">Resume Optimizer</h2><button class="btn btn-primary btn-sm" onclick="RF.runOptimizer()">⚡ Optimize</button></div>
+        <div class="card mb-6"><div class="card-title mb-3">Current Resume</div><textarea class="form-textarea" id="optimizerResume" placeholder="Paste resume..." style="min-height:140px"></textarea></div>
+        <div class="card mb-6"><div class="card-title mb-3">Target Job (Optional)</div><textarea class="form-textarea" id="optimizerJob" placeholder="Paste job description..." style="min-height:90px"></textarea></div>
+        <div class="card" id="optimizerResults" style="display:none"><div class="card-title mb-4">Optimized Resume</div><div id="optimizerOutput"></div></div>
+      </div>
+
+      <!-- ===== COVER LETTER ===== -->
+      <div class="page-panel" id="page-cover-letter">
+        <div class="flex items-center justify-between mb-6"><h2 style="font-size:1.2rem">Cover Letter Generator</h2><button class="btn btn-primary btn-sm" onclick="RF.generateCoverLetter()">✉️ Generate</button></div>
+        <div class="grid grid-2 mb-6">
+          <div class="card"><div class="card-title mb-3">Resume</div><textarea class="form-textarea" id="coverResume" placeholder="Paste your resume..." style="min-height:140px"></textarea></div>
+          <div class="card"><div class="card-title mb-3">Job Details</div>
+            <div class="form-group"><label class="form-label">Job Description</label><textarea class="form-textarea" id="coverJob" placeholder="Paste job description..." style="min-height:100px"></textarea></div>
+            <div class="form-group"><label class="form-label">Company</label><input class="form-input" id="coverCompany" placeholder="e.g., Google"></div>
+          </div>
+        </div>
+        <div class="card" id="coverLetterResult" style="display:none"><div class="card-title mb-4">Your Cover Letter</div><div id="coverLetterOutput"></div></div>
+      </div>
+
+      <!-- ===== JOB ANALYZER ===== -->
+      <div class="page-panel" id="page-job-analyzer">
+        <div class="flex items-center justify-between mb-6"><h2 style="font-size:1.2rem">Job Description Analyzer</h2><button class="btn btn-primary btn-sm" onclick="RF.analyzeJobDesc()">📋 Analyze</button></div>
+        <div class="card mb-6"><textarea class="form-textarea" id="jobDescInput" placeholder="Paste job description here..." style="min-height:180px"></textarea></div>
+        <div class="grid grid-2" id="jobAnalysisResults" style="display:none">
+          <div class="card"><div class="card-title mb-2">Required Skills</div><div id="jobRequiredSkills"></div></div>
+          <div class="card"><div class="card-title mb-2">Preferred Skills</div><div id="jobPreferredSkills"></div></div>
+          <div class="card"><div class="card-title mb-2">Key Keywords</div><div id="jobKeywords"></div></div>
+          <div class="card"><div class="card-title mb-2">Implicit Requirements</div><div id="jobImplicit"></div></div>
+        </div>
+      </div>
+
+      <!-- ===== SKILLS ANALYZER ===== -->
+      <div class="page-panel" id="page-skills-analyzer">
+        <div class="flex items-center justify-between mb-6"><h2 style="font-size:1.2rem">Skills Gap Analyzer</h2><button class="btn btn-primary btn-sm" onclick="RF.analyzeSkillsGap()">🧩 Analyze</button></div>
+        <div class="grid grid-2 mb-6">
+          <div class="card"><div class="card-title mb-3">Current Skills</div><textarea class="form-textarea" id="skillsCurrent" placeholder="List your skills..." style="min-height:140px"></textarea></div>
+          <div class="card"><div class="card-title mb-3">Target Job Skills</div><textarea class="form-textarea" id="skillsTarget" placeholder="Required skills from job..." style="min-height:140px"></textarea></div>
+        </div>
+        <div class="grid grid-3" id="skillsResults" style="display:none">
+          <div class="card"><div class="card-title mb-2">✅ Strong Matches</div><div id="skillsStrong"></div></div>
+          <div class="card"><div class="card-title mb-2">⚠️ Missing</div><div id="skillsMissing"></div></div>
+          <div class="card"><div class="card-title mb-2">📚 Learn</div><div id="skillsRecommended"></div></div>
+        </div>
+      </div>
+
+      <!-- ===== INTERVIEW PREP ===== -->
+      <div class="page-panel" id="page-interview-prep">
+        <div class="flex items-center justify-between mb-6"><h2 style="font-size:1.2rem">Interview Preparation</h2><button class="btn btn-primary btn-sm" onclick="RF.generateInterviewPrep()">🎤 Generate</button></div>
+        <div class="grid grid-2 mb-6">
+          <div class="card"><div class="card-title mb-3">Resume</div><textarea class="form-textarea" id="interviewResume" placeholder="Paste your resume..." style="min-height:140px"></textarea></div>
+          <div class="card"><div class="card-title mb-3">Job Description (Optional)</div><textarea class="form-textarea" id="interviewJob" placeholder="Paste job description..." style="min-height:140px"></textarea></div>
+        </div>
+        <div class="grid grid-2" id="interviewResults" style="display:none">
+          <div class="card"><div class="card-title mb-2">Technical Questions</div><div id="interviewTechnical"></div></div>
+          <div class="card"><div class="card-title mb-2">Behavioral Questions</div><div id="interviewBehavioral"></div></div>
+        </div>
+      </div>
+
+      <!-- ===== LINKEDIN OPTIMIZER ===== -->
+      <div class="page-panel" id="page-linkedin-optimizer">
+        <div class="flex items-center justify-between mb-6"><h2 style="font-size:1.2rem">LinkedIn Profile Optimizer</h2><button class="btn btn-primary btn-sm" onclick="RF.generateLinkedIn()">💼 Generate</button></div>
+        <div class="card mb-6"><div class="card-title mb-3">Your Background</div><textarea class="form-textarea" id="linkedinResume" placeholder="Paste your resume or background..." style="min-height:140px"></textarea></div>
+        <div class="grid grid-2" id="linkedinResults" style="display:none">
+          <div class="card"><div class="card-title mb-2">Headline</div><div id="linkedinHeadline"></div></div>
+          <div class="card"><div class="card-title mb-2">About Section</div><div id="linkedinAbout"></div></div>
+        </div>
+      </div>
+
+      <!-- ===== TEMPLATES ===== -->
+      <div class="page-panel" id="page-resume-templates">
+        <h2 style="margin-bottom:1.5rem;font-size:1.2rem">Resume Templates</h2>
+        <div class="grid grid-3">
+          <div class="card text-center"><div style="padding:2rem;background:#fff;border-radius:var(--radius);margin-bottom:0.8rem;color:#1a1a1a;font-size:0.85rem">📄<br><strong>Executive</strong><br><small>Leadership focus</small></div><button class="btn btn-glass btn-sm w-full" onclick="RF.selectTemplate('executive')">Use</button></div>
+          <div class="card text-center"><div style="padding:2rem;background:#fff;border-radius:var(--radius);margin-bottom:0.8rem;color:#1a1a1a;font-size:0.85rem">📄<br><strong>Modern</strong><br><small>Contemporary</small></div><button class="btn btn-glass btn-sm w-full" onclick="RF.selectTemplate('modern')">Use</button></div>
+          <div class="card text-center"><div style="padding:2rem;background:#fff;border-radius:var(--radius);margin-bottom:0.8rem;color:#1a1a1a;font-size:0.85rem">📄<br><strong>ATS-Friendly</strong><br><small>Maximum parsing</small></div><button class="btn btn-glass btn-sm w-full" onclick="RF.selectTemplate('ats')">Use</button></div>
+          <div class="card text-center"><div style="padding:2rem;background:#fff;border-radius:var(--radius);margin-bottom:0.8rem;color:#1a1a1a;font-size:0.85rem">📄<br><strong>Technical</strong><br><small>Software roles</small></div><button class="btn btn-glass btn-sm w-full" onclick="RF.selectTemplate('technical')">Use</button></div>
+          <div class="card text-center"><div style="padding:2rem;background:#fff;border-radius:var(--radius);margin-bottom:0.8rem;color:#1a1a1a;font-size:0.85rem">📄<br><strong>Minimal</strong><br><small>Simple &amp; elegant</small></div><button class="btn btn-glass btn-sm w-full" onclick="RF.selectTemplate('minimal')">Use</button></div>
+          <div class="card text-center"><div style="padding:2rem;background:#fff;border-radius:var(--radius);margin-bottom:0.8rem;color:#1a1a1a;font-size:0.85rem">📄<br><strong>Student</strong><br><small>Entry level</small></div><button class="btn btn-glass btn-sm w-full" onclick="RF.selectTemplate('student')">Use</button></div>
+        </div>
+      </div>
+
+      <!-- ===== VERSIONS ===== -->
+      <div class="page-panel" id="page-resume-versions">
+        <div class="flex items-center justify-between mb-6"><h2 style="font-size:1.2rem">Resume Versions</h2><button class="btn btn-glass btn-sm" onclick="RF.saveResumeVersion()">💾 Save Current</button></div>
+        <div id="versionList"><div class="empty-state"><div class="empty-state-icon">🔄</div><div class="empty-state-title">No versions yet</div><div class="empty-state-desc">Save versions of your resume to track changes over time.</div></div></div>
+      </div>
+
+      <!-- ===== AI MODEL CENTER ===== -->
+      <div class="page-panel" id="page-ai-model-center">
+        <div class="flex items-center justify-between mb-6"><h2 style="font-size:1.2rem">AI Model Center</h2>
+          <div class="flex gap-2">
+            <button class="btn btn-outline btn-sm" onclick="RF.testAllProviders()">🔍 Test All</button>
+            <button class="btn btn-glass btn-sm" onclick="RF.navigate('api-keys')">🔑 Keys</button>
+          </div>
+        </div>
+        <div class="card mb-6">
+          <div class="card-title mb-4">Routing Mode</div>
+          <div class="flex gap-2 flex-wrap">
+            <button class="btn btn-glass btn-sm routing-mode-btn active" data-mode="auto" onclick="RF.setRoutingMode('auto',this)">🤖 Auto</button>
+            <button class="btn btn-glass btn-sm routing-mode-btn" data-mode="quality" onclick="RF.setRoutingMode('quality',this)">⭐ Quality</button>
+            <button class="btn btn-glass btn-sm routing-mode-btn" data-mode="speed" onclick="RF.setRoutingMode('speed',this)">⚡ Speed</button>
+            <button class="btn btn-glass btn-sm routing-mode-btn" data-mode="economy" onclick="RF.setRoutingMode('economy',this)">💎 Economy</button>
+            <button class="btn btn-glass btn-sm routing-mode-btn" data-mode="manual" onclick="RF.setRoutingMode('manual',this)">🎯 Manual</button>
+          </div>
+        </div>
+        <div class="card mb-6"><div class="card-title mb-4">Provider Priority</div><div id="providerPriority"><p class="text-muted text-sm">Configure API keys to see providers.</p></div></div>
+        <div class="card"><div class="card-title mb-4">Available Models</div><div class="grid grid-3" id="modelCards"><p class="text-muted text-sm">Configure providers to see models.</p></div></div>
+      </div>
+
+      <!-- ===== API KEYS ===== -->
+      <div class="page-panel" id="page-api-keys">
+        <h2 style="margin-bottom:1.5rem;font-size:1.2rem">API Key Manager</h2>
+        <div class="card mb-6" style="background:rgba(214,179,106,0.03);border-color:rgba(214,179,106,0.12)">
+          <p class="text-sm text-secondary">⚠️ <strong>Your API keys are stored locally in your browser.</strong> They are never sent to our servers. Never share your keys with anyone.</p>
+        </div>
+        <div id="apiKeyProviders"></div>
+        <div class="card mt-6">
+          <div class="card-title mb-4">Add Custom Provider (OpenAI-compatible)</div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Provider Name</label><input class="form-input" id="customProviderName" placeholder="e.g., My Local LLM"></div>
+            <div class="form-group"><label class="form-label">Base URL</label><input class="form-input" id="customProviderUrl" placeholder="https://api.example.com/v1"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">API Key</label><input class="form-input" id="customProviderKey" type="password" placeholder="sk-..."></div>
+            <div class="form-group"><label class="form-label">Model Name</label><input class="form-input" id="customProviderModel" placeholder="model-name"></div>
+          </div>
+          <button class="btn btn-outline btn-sm mt-2" onclick="RF.addCustomProvider()">+ Add Provider</button>
+        </div>
+      </div>
+
+      <!-- ===== USAGE ===== -->
+      <div class="page-panel" id="page-usage-analytics">
+        <h2 style="margin-bottom:1.5rem;font-size:1.2rem">Usage &amp; Analytics</h2>
+        <div class="grid grid-4 mb-6">
+          <div class="card stat-card"><div class="stat-value" id="usageTotalRequests">0</div><div class="stat-label">Total Requests</div></div>
+          <div class="card stat-card"><div class="stat-value" id="usageSuccessRate">--</div><div class="stat-label">Success Rate</div></div>
+          <div class="card stat-card"><div class="stat-value" id="usageAvgTime">--</div><div class="stat-label">Avg Response</div></div>
+          <div class="card stat-card"><div class="stat-value" id="usageErrors">0</div><div class="stat-label">Errors</div></div>
+        </div>
+        <div class="card"><div class="card-title mb-4">Request Log</div><div id="usageLog"><p class="text-muted text-sm">Usage appears here as you use the app.</p></div></div>
+      </div>
+
+      <!-- ===== SETTINGS ===== -->
+      <div class="page-panel" id="page-settings">
+        <h2 style="margin-bottom:1.5rem;font-size:1.2rem">Settings</h2>
+        <div class="grid grid-2">
+          <div class="card">
+            <div class="card-title mb-4">Appearance</div>
+            <div class="form-group"><label class="form-label">Theme</label><select class="form-select" id="settingTheme" onchange="RF.applyTheme(this.value)"><option value="dark">Luxury Dark</option><option value="light">Light</option><option value="system">System</option></select></div>
+          </div>
+          <div class="card">
+            <div class="card-title mb-4">Accessibility</div>
+            <label class="form-checkbox"><input type="checkbox" id="settingReduceMotion" onchange="RF.toggleReducedMotion(this.checked)"> Reduce Motion</label>
+          </div>
+          <div class="card">
+            <div class="card-title mb-4">AI Defaults</div>
+            <div class="form-group"><label class="form-label">Routing Mode</label><select class="form-select" id="settingRoutingMode" onchange="RF.State.settings.routingMode=this.value;RF.State.routingMode=this.value"><option value="auto">Automatic</option><option value="quality">Quality</option><option value="speed">Speed</option><option value="economy">Economy</option><option value="manual">Manual</option></select></div>
+            <div class="form-group"><label class="form-label">Temperature</label><input class="form-input" id="settingTemperature" type="number" min="0" max="2" step="0.1" value="0.7" onchange="RF.State.settings.temperature=parseFloat(this.value)"></div>
+          </div>
+          <div class="card">
+            <div class="card-title mb-4">Data Management</div>
+            <button class="btn btn-danger btn-sm w-full mb-2" onclick="RF.clearAllData()">🗑 Clear All Data</button>
+            <button class="btn btn-danger btn-sm w-full" onclick="RF.clearAIChat()">🗑 Clear AI Chat</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== PRIVACY & SECURITY ===== -->
+      <div class="page-panel" id="page-privacy-security">
+        <h2 style="margin-bottom:1.5rem;font-size:1.2rem">Privacy &amp; Security</h2>
+        <div class="grid grid-2">
+          <div class="card"><div class="card-title mb-4">🔐 Data Storage</div><p class="text-sm text-secondary">All data is stored exclusively in your browser's localStorage. Nothing is sent to any server. Your resumes, jobs, and API keys never leave your device.</p></div>
+          <div class="card"><div class="card-title mb-4">🔑 API Keys</div><p class="text-sm text-secondary">API keys are stored locally with basic encoding. They are used only to make direct requests to AI providers on your behalf. We never proxy or log your requests.</p></div>
+          <div class="card"><div class="card-title mb-4">🌐 Network Requests</div><p class="text-sm text-secondary">The app makes requests only to AI provider APIs you configure (OpenAI, Anthropic, etc.) and to Google Fonts for typography. No analytics or tracking beyond anonymous Umami stats.</p></div>
+          <div class="card"><div class="card-title mb-4">🗑 Your Rights</div><p class="text-sm text-secondary mb-3">You can delete all stored data at any time.</p><button class="btn btn-danger btn-sm" onclick="RF.clearAllData()">Delete All My Data</button></div>
+        </div>
+      </div>
+
+    </div><!-- end .page-area -->
+  </main>
+</div><!-- end #appShell -->
+
+<!-- ===== FLOATING AI ASSISTANT ===== -->
 <button class="ai-float" id="aiFloatingBtn" onclick="RF.toggleAIPanel()" title="CareerAI Assistant">✦</button>
 <div class="ai-chat-panel" id="aiPanel">
   <div class="ai-chat-header">
@@ -101,7 +472,7 @@
   </div>
 </div>
 
-<!-- Command Palette -->
+<!-- ===== COMMAND PALETTE ===== -->
 <div class="cmd-overlay" id="cmdOverlay" onclick="RF.closeCommandPalette()">
   <div class="cmd-palette" onclick="event.stopPropagation()">
     <div class="cmd-input"><input type="text" id="commandInput" placeholder="Type a command..." oninput="RF.filterCommands()" onkeydown="RF.handleCommandKey(event)"></div>
@@ -109,14 +480,15 @@
   </div>
 </div>
 
-<!-- Notification Toast -->
+<!-- ===== NOTIFICATION TOAST ===== -->
 <div class="notification" id="notification"></div>
 
-<!-- Modal -->
+<!-- ===== MODAL ===== -->
 <div class="modal-overlay" id="modalOverlay" onclick="RF.closeModal()">
   <div class="modal" id="modalContent" onclick="event.stopPropagation()"></div>
 </div>
 
+<!-- ===== SCRIPTS ===== -->
 <script src="js/config.js"></script>
 <script src="js/state.js"></script>
 <script src="js/ui.js"></script>
@@ -128,27 +500,10 @@
 <script src="js/assistant.js"></script>
 <script src="js/app.js"></script>
 <script src="js/three-bg.js"></script>
-<!-- Load app shell async -->
 <script>
-// Register service worker for offline support
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js').catch(function() { /* optional */ });
-}
-// Fetch and inject the app shell, then wire up navigation
-fetch('app.html').then(function(r){return r.text();}).then(function(html){
-  document.getElementById('appShell').innerHTML = html;
-  // Re-init sidebar now that nav items are in the DOM
-  RF.initSidebar();
-  // Draw initial score rings now that canvases exist
-  setTimeout(function() {
-    RF.drawScoreRing('healthScoreCanvas', 'healthScoreValue', 0);
-    RF.drawScoreRing('atsScoreCanvas', 'atsOverallScore', 0);
-  }, 100);
-  // Render the current page
-  RF.renderPage(RF.currentPage);
-}).catch(function(){
-  document.getElementById('appShell').innerHTML = '<div style="padding:4rem;text-align:center;color:var(--text-muted)">Loading application...</div>';
-});
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').catch(function() {});
+  }
 </script>
 </body>
 </html>
