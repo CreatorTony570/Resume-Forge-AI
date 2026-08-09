@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ResumeForge AI — Intelligent Resume Engineering & Career Optimization</title>
+<meta name="description" content="AI-powered resume builder, ATS scanner, job matcher, and career intelligence platform. Build resumes that get read — optimized to get hired.">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon.png">
+<link rel="apple-touch-icon" sizes="192x192" href="/assets/icon-192.png">
+<!-- Umami Analytics — privacy-friendly, GDPR-compliant, open-source -->
+<!-- Replace data-website-id with your own from https://umami.is -->
+<script defer src="https://cloud.umami.is/script.js" data-website-id="00000000-0000-0000-0000-000000000000" data-domains="resumeforge.ai"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/design.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/pages.css">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#08090D">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+<div class="landing-page" id="landingPage">
+  <div class="landing-bg"><div id="three-bg"></div></div>
+
+  <nav class="landing-nav">
+    <div class="landing-logo">
+      <div class="landing-logo-icon">R</div>
+      ResumeForge AI
+    </div>
+    <ul class="landing-nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#how">How It Works</a></li>
+      <li><a href="#privacy">Privacy</a></li>
+      <li><a href="#" onclick="document.getElementById('landingPage').style.display='none';document.getElementById('appShell').classList.add('active');RF.navigate('dashboard');return false">Dashboard</a></li>
+    </ul>
+    <button class="btn btn-primary btn-sm landing-nav-cta" onclick="document.getElementById('landingPage').style.display='none';document.getElementById('appShell').classList.add('active');RF.navigate('dashboard');return false">
+      Launch App
+    </button>
+  </nav>
+
+  <section class="hero-section">
+    <div class="hero-content">
+      <div class="hero-badge">✦ AI-POWERED CAREER INTELLIGENCE</div>
+      <h1 class="hero-title">Build a Resume <span class="text-gradient">Engineered</span> for Your Next Opportunity.</h1>
+      <p class="hero-subtitle">ResumeForge AI combines advanced artificial intelligence with resume engineering best practices. Create, analyze, optimize, and match resumes with precision — all powered by AI models <strong>you control</strong>.</p>
+      <div class="hero-actions">
+        <button class="btn btn-primary btn-lg" onclick="document.getElementById('landingPage').style.display='none';document.getElementById('appShell').classList.add('active');RF.navigate('resume-builder');return false">
+          ✦ Start Building Resume
+        </button>
+        <button class="btn btn-glass btn-lg" onclick="document.getElementById('landingPage').style.display='none';document.getElementById('appShell').classList.add('active');RF.navigate('resume-review');return false">
+          Analyze My Resume
+        </button>
+        <button class="btn btn-outline btn-lg" onclick="document.getElementById('landingPage').style.display='none';document.getElementById('appShell').classList.add('active');setTimeout(function(){RF.openAIPanel();},400);return false">
+          Try AI Assistant
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="landing-features" id="features">
+    <div class="landing-feature-card"><div class="feature-icon">📄</div><h3>Resume Builder</h3><p>Professional resume creation with AI-assisted content, live preview, and multiple premium templates.</p></div>
+    <div class="landing-feature-card"><div class="feature-icon">🔍</div><h3>ATS Scanner</h3><p>Advanced ATS analysis shows exactly how your resume performs against applicant tracking systems.</p></div>
+    <div class="landing-feature-card"><div class="feature-icon">🎯</div><h3>Job Matcher</h3><p>Compare your resume against job descriptions. Get precise match scores with actionable gap analysis.</p></div>
+    <div class="landing-feature-card"><div class="feature-icon">🤖</div><h3>AI Career Assistant</h3><p>Context-aware AI assistant for bullet rewrites, career strategy, interview prep, and more — 24/7.</p></div>
+    <div class="landing-feature-card"><div class="feature-icon">🔐</div><h3>Bring Your Own Key</h3><p>Use your own API keys. Full control over AI providers, models, and data privacy. No hidden costs.</p></div>
+    <div class="landing-feature-card"><div class="feature-icon">⚡</div><h3>Smart Routing</h3><p>Automatic model selection with intelligent fallback. The right AI for every task, every time.</p></div>
+  </section>
+
+  <footer class="landing-footer text-center p-8 text-muted text-sm" style="position:relative;z-index:10;border-top:1px solid var(--glass-border)">
+    <p>© 2026 ResumeForge AI — Intelligent Resume Engineering & Career Optimization. Built with care for professionals worldwide.</p>
+  </footer>
+</div>
+
+<!-- The app shell is loaded async -->
+<div class="app-shell" id="appShell"></div>
+
+<!-- Floating AI Assistant -->
+<button class="ai-float" id="aiFloatingBtn" onclick="RF.toggleAIPanel()" title="CareerAI Assistant">✦</button>
+<div class="ai-chat-panel" id="aiPanel">
+  <div class="ai-chat-header">
+    <span class="ai-chat-title">✦ CareerAI Assistant</span>
+    <div class="flex gap-1">
+      <button class="btn btn-glass btn-sm btn-icon" onclick="RF.clearAIChat()">🗑</button>
+      <button class="btn btn-glass btn-sm btn-icon" onclick="RF.toggleAIPanel()">✕</button>
+    </div>
+  </div>
+  <div class="ai-chat-suggestions">
+    <span class="ai-chat-suggestion" onclick="RF.sendAISuggestion('Improve my professional summary')">Improve summary</span>
+    <span class="ai-chat-suggestion" onclick="RF.sendAISuggestion('Why is my ATS score low?')">ATS score help</span>
+    <span class="ai-chat-suggestion" onclick="RF.sendAISuggestion('Optimize my experience section')">Optimize experience</span>
+    <span class="ai-chat-suggestion" onclick="RF.sendAISuggestion('What skills am I missing?')">Missing skills</span>
+  </div>
+  <div class="ai-chat-messages" id="aiMessages">
+    <div class="ai-chat-msg assistant">Hello! I'm CareerAI, your career intelligence assistant. I can help with resume writing, ATS optimization, job matching, and more.</div>
+  </div>
+  <div class="ai-chat-input">
+    <input type="text" id="aiInput" placeholder="Ask about your resume, career, ATS..." onkeydown="if(event.key==='Enter')RF.sendAIMessage()">
+    <button class="btn btn-primary btn-sm" onclick="RF.sendAIMessage()">Send</button>
+  </div>
+</div>
+
+<!-- Command Palette -->
+<div class="cmd-overlay" id="cmdOverlay" onclick="RF.closeCommandPalette()">
+  <div class="cmd-palette" onclick="event.stopPropagation()">
+    <div class="cmd-input"><input type="text" id="commandInput" placeholder="Type a command..." oninput="RF.filterCommands()" onkeydown="RF.handleCommandKey(event)"></div>
+    <div class="cmd-list" id="commandList"></div>
+  </div>
+</div>
+
+<!-- Notification Toast -->
+<div class="notification" id="notification"></div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modalOverlay" onclick="RF.closeModal()">
+  <div class="modal" id="modalContent" onclick="event.stopPropagation()"></div>
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/state.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/security.js"></script>
+<script src="js/ai.js"></script>
+<script src="js/router.js"></script>
+<script src="js/pages.js"></script>
+<script src="js/models.js"></script>
+<script src="js/assistant.js"></script>
+<script src="js/app.js"></script>
+<script src="js/three-bg.js"></script>
+<!-- Load app shell async -->
+<script>
+// Register service worker for offline support
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').catch(function() { /* optional */ });
+}
+// Fetch and inject the app shell
+fetch('app.html').then(function(r){return r.text();}).then(function(html){
+  document.getElementById('appShell').innerHTML = html;
+}).catch(function(){
+  document.getElementById('appShell').innerHTML = '<div style="padding:4rem;text-align:center;color:var(--text-muted)">Loading application...</div>';
+});
+</script>
+</body>
+</html>

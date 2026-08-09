@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ResumeForge AI</title>
+<script>
+  // GitHub Pages SPA redirect trick:
+  // Convert the 404 path into a fragment and redirect to index.html
+  sessionStorage.redirect = location.href;
+  location.replace('/' + (location.pathname.slice(1) ? '?p=' + location.pathname.slice(1) : ''));
+</script>
+</head>
+<body></body>
+</html>

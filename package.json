@@ -1,0 +1,35 @@
+{
+  "name": "resumeforge-ai",
+  "version": "1.0.0",
+  "description": "AI-powered Resume Writing & Career Intelligence Platform — build, analyze, optimize & match resumes with precision.",
+  "private": true,
+  "license": "UNLICENSED",
+  "author": "ResumeForge AI",
+  "homepage": "https://resumeforge.ai",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/resumeforge/resumeforge-ai"
+  },
+  "keywords": [
+    "resume",
+    "resume-builder",
+    "ats-scanner",
+    "ai-resume",
+    "career-platform",
+    "job-matcher",
+    "cover-letter",
+    "linkedin-optimizer",
+    "ai-career-assistant",
+    "resume-review",
+    "interview-prep"
+  ],
+  "scripts": {
+    "dev": "npx serve .",
+    "start": "npx serve . -l 8080",
+    "lint": "npx eslint js/",
+    "format": "npx prettier --write ."
+  },
+  "devDependencies": {
+    "serve": "^14.2.0"
+  }
+}
