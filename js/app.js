@@ -16,17 +16,10 @@
   var rmSelect = RF.el('settingRoutingMode');
   if (rmSelect) rmSelect.value = RF.State.settings.routingMode;
 
-  // Initialize subsystems
-  RF.initSidebar();
+  // Initialize subsystems (sidebar init deferred to after app shell loads)
   RF.initKeys();
   RF.autoSave();
   RF.updateAIStatus();
-
-  // Draw initial score rings
-  setTimeout(function() {
-    RF.drawScoreRing('healthScoreCanvas', 'healthScoreValue', 0);
-    RF.drawScoreRing('atsScoreCanvas', 'atsOverallScore', 0);
-  }, 300);
 
   // Save on unload
   window.addEventListener('beforeunload', RF.saveState);

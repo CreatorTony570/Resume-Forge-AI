@@ -134,9 +134,18 @@
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/sw.js').catch(function() { /* optional */ });
 }
-// Fetch and inject the app shell
+// Fetch and inject the app shell, then wire up navigation
 fetch('app.html').then(function(r){return r.text();}).then(function(html){
   document.getElementById('appShell').innerHTML = html;
+  // Re-init sidebar now that nav items are in the DOM
+  RF.initSidebar();
+  // Draw initial score rings now that canvases exist
+  setTimeout(function() {
+    RF.drawScoreRing('healthScoreCanvas', 'healthScoreValue', 0);
+    RF.drawScoreRing('atsScoreCanvas', 'atsOverallScore', 0);
+  }, 100);
+  // Render the current page
+  RF.renderPage(RF.currentPage);
 }).catch(function(){
   document.getElementById('appShell').innerHTML = '<div style="padding:4rem;text-align:center;color:var(--text-muted)">Loading application...</div>';
 });
