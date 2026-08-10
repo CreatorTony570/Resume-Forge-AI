@@ -173,6 +173,7 @@ RF.COMMANDS = [
   { name:'Interview Prep',       icon:'🎤', page:'interview-prep' },
   { name:'LinkedIn Optimizer',   icon:'💼', page:'linkedin-optimizer' },
   { name:'Salary Negotiation',   icon:'💰', page:'salary-negotiation' },
+  { name:'Job Application Tracker', icon:'📌', page:'job-tracker' },
   { name:'AI Model Center',      icon:'🧠', page:'ai-model-center' },
   { name:'API Key Manager',      icon:'🔑', page:'api-keys' },
   { name:'Open AI Assistant',    icon:'🤖', action:'openAI' },
@@ -186,6 +187,7 @@ RF.PAGE_TITLES = {
   'cover-letter':'Cover Letter Generator','job-analyzer':'Job Description Analyzer',
   'skills-analyzer':'Skills Gap Analyzer','interview-prep':'Interview Preparation',
   'linkedin-optimizer':'LinkedIn Optimizer','salary-negotiation':'Salary Negotiation Coach',
+  'job-tracker':'Job Application Tracker',
   'resume-templates':'Resume Templates','resume-versions':'Version History',
   'ai-model-center':'AI Model Center','api-keys':'API Key Manager',
   'usage-analytics':'Usage & Analytics','settings':'Settings','privacy-security':'Privacy & Security'

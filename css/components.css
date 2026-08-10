@@ -136,3 +136,62 @@
 
 /* ── Salary page ── */
 #page-salary-negotiation .card-title { color:var(--gold-light); }
+
+/* ── Job Application Tracker ── */
+.tracker-stat { text-align:center; padding:0.6rem 0.75rem; }
+.tracker-stat-num { font-size:1.6rem; font-weight:900; line-height:1; }
+.tracker-stat-label { font-size:0.68rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-muted); margin-top:0.2rem; }
+.tracker-stage-group { margin-bottom:1.5rem; }
+.tracker-stage-title { font-size:0.78rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-muted); margin-bottom:0.65rem; display:flex; align-items:center; gap:0.5rem; }
+.tracker-card { background:var(--glass-bg); border:1px solid var(--glass-border); border-radius:var(--radius); padding:1rem 1.15rem; margin-bottom:0.5rem; display:flex; align-items:flex-start; justify-content:space-between; gap:1rem; transition:all var(--ease-fast); }
+.tracker-card:hover { border-color:var(--gold-border); background:rgba(214,179,106,0.04); }
+.tracker-card-main { flex:1; min-width:0; }
+.tracker-card-role { font-weight:700; font-size:0.92rem; margin-bottom:0.2rem; }
+.tracker-card-company { font-size:0.8rem; color:var(--text-secondary); margin-bottom:0.35rem; }
+.tracker-card-meta { display:flex; gap:1rem; flex-wrap:wrap; font-size:0.75rem; color:var(--text-muted); margin-bottom:0.25rem; }
+.tracker-card-meta a { color:var(--gold); }
+.tracker-card-notes { font-size:0.75rem; color:var(--text-muted); font-style:italic; margin-top:0.35rem; line-height:1.4; }
+.tracker-card-actions { display:flex; gap:0.4rem; align-items:center; flex-shrink:0; flex-wrap:wrap; }
+
+/* ── Code inline ── */
+.ai-code { font-family:var(--font-mono); font-size:0.8em; background:rgba(255,255,255,0.07); padding:0.1em 0.4em; border-radius:4px; color:var(--gold-light); }
+
+/* ── Onboarding banner ── */
+.onboarding-banner { background:linear-gradient(135deg,rgba(214,179,106,0.08),rgba(214,179,106,0.03)); border:1px solid var(--gold-border); border-radius:var(--radius-lg); padding:1.25rem 1.5rem; margin-bottom:1.5rem; display:flex; align-items:center; justify-content:space-between; gap:1rem; }
+.onboarding-banner-text h3 { font-size:0.95rem; font-weight:700; margin-bottom:0.25rem; }
+.onboarding-banner-text p { font-size:0.82rem; color:var(--text-secondary); }
+
+/* ── Resume live score indicator ── */
+.live-score { display:flex; align-items:center; gap:0.5rem; font-size:0.78rem; }
+.live-score-bar { flex:1; height:5px; background:var(--border-subtle); border-radius:3px; overflow:hidden; }
+.live-score-fill { height:100%; border-radius:3px; transition:width 0.5s ease, background 0.3s ease; }
+
+/* ── AI suggestions panel (right builder) ── */
+.ai-suggestion-item { padding:0.65rem 0.8rem; background:rgba(255,255,255,0.02); border:1px solid var(--border-subtle); border-radius:var(--radius-sm); margin-bottom:0.5rem; font-size:0.78rem; line-height:1.5; color:var(--text-secondary); cursor:pointer; transition:all var(--ease-fast); }
+.ai-suggestion-item:hover { border-color:var(--gold-border); color:var(--text-primary); background:var(--gold-bg); }
+
+/* ── Progress steps (onboarding) ── */
+.steps { display:flex; gap:0.5rem; margin-bottom:1.5rem; }
+.step { flex:1; text-align:center; padding:0.65rem 0.5rem; border-radius:var(--radius); font-size:0.75rem; font-weight:600; border:1px solid var(--border-subtle); background:var(--glass-bg); color:var(--text-muted); }
+.step.done { background:var(--success-bg); border-color:rgba(16,185,129,0.25); color:var(--success); }
+.step.active { background:var(--gold-bg); border-color:var(--gold-border); color:var(--gold); }
+
+/* ── Tooltip ── */
+[data-tip] { position:relative; }
+[data-tip]:hover::after { content:attr(data-tip); position:absolute; bottom:calc(100% + 6px); left:50%; transform:translateX(-50%); background:var(--charcoal); border:1px solid var(--border-default); border-radius:var(--radius-sm); padding:0.35rem 0.7rem; font-size:0.72rem; white-space:nowrap; color:var(--text-primary); z-index:1000; pointer-events:none; }
+
+/* ── Typing animation for AI chat ── */
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+.ai-typing-dot { display:inline-block; width:5px; height:5px; background:var(--gold); border-radius:50%; margin:0 1px; animation:blink 1.2s infinite; }
+.ai-typing-dot:nth-child(2) { animation-delay:0.2s; }
+.ai-typing-dot:nth-child(3) { animation-delay:0.4s; }
+
+/* ── Page transition ── */
+.page-panel.active { animation:pageIn 0.18s ease both; }
+@keyframes pageIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+
+/* ── Print resume ── */
+@media print {
+  body > *:not(#resumePreview) { display:none !important; }
+  #resumePreview { display:block !important; box-shadow:none; border:none; padding:0; }
+}

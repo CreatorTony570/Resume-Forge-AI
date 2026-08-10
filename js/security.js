@@ -64,13 +64,14 @@ RF.Security = {
     if (!key || typeof key !== 'string') return false;
     key = key.trim();
     if (key.length < 10) return false;
-    // Basic format checks per provider
     switch(provider) {
-      case 'openai':      return key.startsWith('sk-') && key.length > 40;
-      case 'anthropic':   return key.startsWith('sk-ant-') && key.length > 30;
-      case 'gemini':      return key.length > 30;  // Google keys vary
-      case 'openrouter':  return key.startsWith('sk-or-') && key.length > 30;
-      case 'groq':        return key.startsWith('gsk_') && key.length > 30;
+      case 'openai':      return key.startsWith('sk-') && key.length > 20;
+      case 'anthropic':   return key.startsWith('sk-ant-') && key.length > 20;
+      case 'gemini':      return key.length > 20;
+      case 'openrouter':  return key.startsWith('sk-or-') && key.length > 20;
+      case 'groq':        return key.startsWith('gsk_') && key.length > 20;
+      case 'mistral':     return key.length >= 10;
+      case 'cohere':      return key.length >= 10;
       default:            return key.length >= 10;
     }
   },

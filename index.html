@@ -88,6 +88,7 @@
         <button class="nav-item" data-page="interview-prep"><span class="nav-icon">🎤</span> Interview Prep</button>
         <button class="nav-item" data-page="linkedin-optimizer"><span class="nav-icon">💼</span> LinkedIn Optimizer</button>
         <button class="nav-item" data-page="salary-negotiation"><span class="nav-icon">💰</span> Salary Negotiation</button>
+        <button class="nav-item" data-page="job-tracker"><span class="nav-icon">📌</span> Job Tracker</button>
       </div>
       <div class="nav-section"><div class="nav-section-title">AI &amp; Models</div>
         <button class="nav-item" data-page="ai-model-center"><span class="nav-icon">🧠</span> AI Model Center</button>
@@ -126,34 +127,47 @@
 
       <!-- ===== DASHBOARD ===== -->
       <div class="page-panel active" id="page-dashboard">
+        <div id="onboardingBanner" style="display:none" class="onboarding-banner">
+          <div class="onboarding-banner-text">
+            <h3>👋 Welcome to ResumeForge AI!</h3>
+            <p>To unlock all AI features, add a free API key first. OpenRouter &amp; Groq have completely free models.</p>
+          </div>
+          <div class="flex gap-2" style="flex-shrink:0">
+            <button class="btn btn-primary btn-sm" onclick="RF.navigate('api-keys')">🔑 Add API Key</button>
+            <button class="btn btn-glass btn-sm btn-icon" onclick="this.closest('.onboarding-banner').style.display='none'" data-tip="Dismiss">✕</button>
+          </div>
+        </div>
         <div class="grid grid-4 mb-6">
-          <div class="card stat-card"><div class="score-ring"><canvas id="healthScoreCanvas"></canvas><div class="score-ring-value" id="healthScoreValue">--</div></div><div class="stat-label">Resume Health</div></div>
-          <div class="card stat-card"><div class="stat-value gold" id="statAtsScore">--</div><div class="stat-label">ATS Score</div></div>
+          <div class="card stat-card"><div class="score-ring"><canvas id="healthScoreCanvas"></canvas><div class="score-ring-value" id="healthScoreValue">--</div></div><div class="stat-label">ATS Health</div></div>
+          <div class="card stat-card"><div class="stat-value gold" id="statAtsScore">--</div><div class="stat-label">Avg ATS Score</div></div>
           <div class="card stat-card"><div class="stat-value" id="statResumeCount">0</div><div class="stat-label">Resumes</div></div>
           <div class="card stat-card"><div class="stat-value" id="statJobMatch">--</div><div class="stat-label">Best Match</div></div>
         </div>
         <div class="grid grid-2 mb-6">
-          <div class="card"><div class="card-header"><span class="card-title">Quick Actions</span></div>
-            <div class="grid grid-2" style="gap:0.65rem">
+          <div class="card">
+            <div class="card-header"><span class="card-title">⚡ Quick Actions</span></div>
+            <div class="grid grid-2" style="gap:0.6rem">
               <button class="btn btn-primary btn-sm" onclick="RF.navigate('resume-builder')">📄 Build Resume</button>
               <button class="btn btn-glass btn-sm" onclick="RF.navigate('resume-review')">🔍 Review Resume</button>
-              <button class="btn btn-glass btn-sm" onclick="RF.navigate('ats-scanner')">📊 Scan ATS</button>
+              <button class="btn btn-glass btn-sm" onclick="RF.navigate('ats-scanner')">📊 ATS Scan</button>
               <button class="btn btn-glass btn-sm" onclick="RF.navigate('job-matcher')">🎯 Match Job</button>
-              <button class="btn btn-glass btn-sm" onclick="RF.navigate('resume-optimizer')">⚡ Optimize</button>
               <button class="btn btn-glass btn-sm" onclick="RF.navigate('cover-letter')">✉️ Cover Letter</button>
-              <button class="btn btn-outline btn-sm" onclick="RF.openAIPanel()">🤖 Ask AI</button>
-              <button class="btn btn-glass btn-sm" onclick="RF.navigate('ai-model-center')">🧠 Models</button>
+              <button class="btn btn-glass btn-sm" onclick="RF.navigate('interview-prep')">🎤 Interview Prep</button>
+              <button class="btn btn-glass btn-sm" onclick="RF.navigate('job-tracker')">📌 Job Tracker</button>
+              <button class="btn btn-outline btn-sm" onclick="RF.openAIPanel()">🤖 Ask CareerAI</button>
             </div>
           </div>
-          <div class="card"><div class="card-header"><span class="card-title">AI Insights</span></div>
-            <div id="dashboardInsights"><p class="text-muted text-sm">Configure an AI provider to get personalized insights.</p></div>
+          <div class="card"><div class="card-header"><span class="card-title">🧠 AI Insights</span></div>
+            <div id="dashboardInsights"><p class="text-muted text-sm">Configure an AI provider to unlock insights.</p></div>
           </div>
         </div>
         <div class="grid grid-2">
-          <div class="card"><div class="card-header"><span class="card-title">Recent Resumes</span><button class="btn btn-glass btn-sm" onclick="RF.navigate('resume-builder')">+ New</button></div>
-            <div id="recentResumes"><div class="empty-state"><div class="empty-state-icon">📄</div><div class="empty-state-title">No resumes yet</div><div class="empty-state-desc">Create your first resume or upload an existing one.</div></div></div>
+          <div class="card">
+            <div class="card-header"><span class="card-title">📄 Recent Resumes</span><button class="btn btn-glass btn-sm" onclick="RF.navigate('resume-builder')">+ New</button></div>
+            <div id="recentResumes"><div class="empty-state"><div class="empty-state-icon">📄</div><div class="empty-state-title">No resumes yet</div><div class="empty-state-desc">Create your first resume to get started.</div></div></div>
           </div>
-          <div class="card"><div class="card-header"><span class="card-title">Recent Jobs</span><button class="btn btn-glass btn-sm" onclick="RF.navigate('job-analyzer')">+ Analyze</button></div>
+          <div class="card">
+            <div class="card-header"><span class="card-title">📋 Recent Jobs</span><button class="btn btn-glass btn-sm" onclick="RF.navigate('job-analyzer')">+ Analyze</button></div>
             <div id="recentJobs"><div class="empty-state"><div class="empty-state-icon">📋</div><div class="empty-state-title">No jobs analyzed</div><div class="empty-state-desc">Paste a job description to get started.</div></div></div>
           </div>
         </div>
@@ -161,11 +175,17 @@
 
       <!-- ===== RESUME BUILDER ===== -->
       <div class="page-panel" id="page-resume-builder">
-        <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center justify-between mb-4">
           <h2 style="font-size:1.2rem;font-weight:700">Resume Builder</h2>
-          <div class="flex gap-2">
+          <div class="flex items-center gap-3">
+            <div class="live-score" style="min-width:160px">
+              <span class="text-muted" style="font-size:0.72rem;white-space:nowrap">ATS Score</span>
+              <div class="live-score-bar"><div class="live-score-fill" id="liveScoreBar" style="width:0%"></div></div>
+              <span id="liveScoreText" style="font-size:0.78rem;font-weight:700;min-width:42px;text-align:right">--</span>
+            </div>
             <button class="btn btn-glass btn-sm" onclick="RF.exportResume()">📥 Export</button>
             <button class="btn btn-outline btn-sm" onclick="RF.saveResume()">💾 Save</button>
+            <button class="btn btn-glass btn-sm" onclick="window.print()" data-tip="Print resume">🖨️</button>
           </div>
         </div>
         <div class="builder-layout">
@@ -215,8 +235,17 @@
             </div>
           </div>
           <div class="builder-panel ai-panel-right" style="max-height:calc(100vh - 180px);overflow-y:auto">
-            <div class="builder-section-header"><span class="builder-section-title">AI Suggestions</span></div>
-            <div class="text-sm text-muted">Configure an AI provider to get real-time resume improvement suggestions.</div>
+            <div class="builder-section-header"><span class="builder-section-title">🤖 AI Suggestions</span></div>
+            <p class="text-muted" style="font-size:0.75rem;margin-bottom:0.75rem">Click to get real-time AI help for any section.</p>
+            <div style="display:flex;flex-direction:column;gap:0.5rem">
+              <div class="ai-suggestion-item" onclick="RF.generateSummary()">✨ Generate professional summary</div>
+              <div class="ai-suggestion-item" onclick="RF.sendAISuggestion('Give me 5 powerful action verbs for a software engineer resume');RF.openAIPanel()">⚡ Get strong action verbs</div>
+              <div class="ai-suggestion-item" onclick="RF.sendAISuggestion('How do I quantify my achievements on a resume?');RF.openAIPanel()">📊 How to quantify achievements</div>
+              <div class="ai-suggestion-item" onclick="RF.sendAISuggestion('What skills are in demand for my role?');RF.openAIPanel()">🧩 In-demand skills to add</div>
+              <div class="ai-suggestion-item" onclick="RF.sendAISuggestion('Review my resume summary and rewrite it');RF.openAIPanel()">🔍 AI review my summary</div>
+              <div class="ai-suggestion-item" onclick="RF.navigate('ats-scanner')">📊 Run ATS scan on this resume</div>
+              <div class="ai-suggestion-item" onclick="RF.navigate('resume-optimizer')">⚡ Full resume optimization</div>
+            </div>
           </div>
         </div>
       </div>
@@ -425,6 +454,18 @@
         </div>
       </div>
 
+      <!-- ===== JOB TRACKER ===== -->
+      <div class="page-panel" id="page-job-tracker">
+        <div class="flex items-center justify-between mb-4">
+          <h2 style="font-size:1.2rem">📌 Job Application Tracker</h2>
+          <button class="btn btn-primary btn-sm" onclick="RF.openAddApplication()">+ Add Application</button>
+        </div>
+        <div class="card mb-4">
+          <div class="grid grid-auto" id="trackerStats" style="gap:0.5rem"></div>
+        </div>
+        <div id="trackerList"></div>
+      </div>
+
       <!-- ===== AI MODEL CENTER ===== -->
       <div class="page-panel" id="page-ai-model-center">
         <div class="flex items-center justify-between mb-6"><h2 style="font-size:1.2rem">AI Model Center</h2>
@@ -485,22 +526,42 @@
         <h2 style="margin-bottom:1.5rem;font-size:1.2rem">Settings</h2>
         <div class="grid grid-2">
           <div class="card">
-            <div class="card-title mb-4">Appearance</div>
-            <div class="form-group"><label class="form-label">Theme</label><select class="form-select" id="settingTheme" onchange="RF.applyTheme(this.value)"><option value="dark">Luxury Dark</option><option value="light">Light</option><option value="system">System</option></select></div>
+            <div class="card-title mb-4">🎨 Appearance</div>
+            <div class="form-group">
+              <label class="form-label">Theme</label>
+              <select class="form-select" id="settingTheme" onchange="RF.applyTheme(this.value);RF.State.settings.theme=this.value">
+                <option value="dark">Luxury Dark</option>
+                <option value="light">Clean Light</option>
+              </select>
+            </div>
           </div>
           <div class="card">
-            <div class="card-title mb-4">Accessibility</div>
+            <div class="card-title mb-4">♿ Accessibility</div>
             <label class="form-checkbox"><input type="checkbox" id="settingReduceMotion" onchange="RF.toggleReducedMotion(this.checked)"> Reduce Motion</label>
           </div>
           <div class="card">
-            <div class="card-title mb-4">AI Defaults</div>
-            <div class="form-group"><label class="form-label">Routing Mode</label><select class="form-select" id="settingRoutingMode" onchange="RF.State.settings.routingMode=this.value;RF.State.routingMode=this.value"><option value="auto">Automatic</option><option value="quality">Quality</option><option value="speed">Speed</option><option value="economy">Economy</option><option value="manual">Manual</option></select></div>
-            <div class="form-group"><label class="form-label">Temperature</label><input class="form-input" id="settingTemperature" type="number" min="0" max="2" step="0.1" value="0.7" onchange="RF.State.settings.temperature=parseFloat(this.value)"></div>
+            <div class="card-title mb-4">🤖 AI Defaults</div>
+            <div class="form-group">
+              <label class="form-label">Routing Mode</label>
+              <select class="form-select" id="settingRoutingMode" onchange="RF.State.settings.routingMode=this.value;RF.State.routingMode=this.value">
+                <option value="auto">🤖 Automatic (smart fallback)</option>
+                <option value="quality">⭐ Quality First (Claude / GPT-4)</option>
+                <option value="speed">⚡ Speed First (Groq / Gemini Flash)</option>
+                <option value="economy">💚 Economy (free models only)</option>
+              </select>
+              <p class="form-hint">Controls which AI provider is tried first for all requests.</p>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Temperature (creativity)</label>
+              <input class="form-input" id="settingTemperature" type="number" min="0" max="2" step="0.1" value="0.7" onchange="RF.State.settings.temperature=parseFloat(this.value)">
+              <p class="form-hint">0 = precise/factual, 1 = balanced, 2 = very creative</p>
+            </div>
           </div>
           <div class="card">
-            <div class="card-title mb-4">Data Management</div>
+            <div class="card-title mb-4">🗑 Data Management</div>
+            <p class="text-muted text-sm mb-4">All data is stored locally in your browser. Nothing is ever sent to our servers.</p>
             <button class="btn btn-danger btn-sm w-full mb-2" onclick="RF.clearAllData()">🗑 Clear All Data</button>
-            <button class="btn btn-danger btn-sm w-full" onclick="RF.clearAIChat()">🗑 Clear AI Chat</button>
+            <button class="btn btn-danger btn-sm w-full" onclick="RF.clearAIChat()">🗑 Clear AI Chat History</button>
           </div>
         </div>
       </div>
@@ -526,21 +587,24 @@
   <div class="ai-chat-header">
     <span class="ai-chat-title">✦ CareerAI Assistant</span>
     <div class="flex gap-1">
-      <button class="btn btn-glass btn-sm btn-icon" onclick="RF.clearAIChat()">🗑</button>
+      <button class="btn btn-glass btn-sm btn-icon" onclick="RF.exportChat()" data-tip="Export chat">⬇️</button>
+      <button class="btn btn-glass btn-sm btn-icon" onclick="RF.clearAIChat()" data-tip="Clear chat">🗑</button>
       <button class="btn btn-glass btn-sm btn-icon" onclick="RF.toggleAIPanel()">✕</button>
     </div>
   </div>
   <div class="ai-chat-suggestions">
-    <span class="ai-chat-suggestion" onclick="RF.sendAISuggestion('Improve my professional summary')">Improve summary</span>
-    <span class="ai-chat-suggestion" onclick="RF.sendAISuggestion('Why is my ATS score low?')">ATS score help</span>
-    <span class="ai-chat-suggestion" onclick="RF.sendAISuggestion('Optimize my experience section')">Optimize experience</span>
-    <span class="ai-chat-suggestion" onclick="RF.sendAISuggestion('What skills am I missing?')">Missing skills</span>
+    <span class="ai-chat-suggestion" onclick="RF.sendAISuggestion('Review my resume and give detailed feedback')">Review resume</span>
+    <span class="ai-chat-suggestion" onclick="RF.sendAISuggestion('How do I improve my ATS score?')">ATS tips</span>
+    <span class="ai-chat-suggestion" onclick="RF.sendAISuggestion('Write 5 powerful bullet points for a software engineer role')">Write bullets</span>
+    <span class="ai-chat-suggestion" onclick="RF.sendAISuggestion('What salary should I ask for as a senior engineer in NYC?')">Salary advice</span>
+    <span class="ai-chat-suggestion" onclick="RF.sendAISuggestion('How do I negotiate a job offer?')">Negotiate offer</span>
+    <span class="ai-chat-suggestion" onclick="RF.sendAISuggestion('What are the top FAANG interview questions?')">FAANG interview</span>
   </div>
   <div class="ai-chat-messages" id="aiMessages">
-    <div class="ai-chat-msg assistant">Hello! I'm CareerAI, your career intelligence assistant. I can help with resume writing, ATS optimization, job matching, and more.</div>
+    <div class="ai-chat-msg assistant">Hello! I'm <strong>CareerAI</strong> — your elite career intelligence assistant.<br><br>I can help you with:<br>• Resume writing &amp; optimization<br>• ATS scoring &amp; keyword gaps<br>• Interview prep &amp; STAR answers<br>• Salary negotiation scripts<br>• LinkedIn profile optimization<br><br>What are you working on?</div>
   </div>
   <div class="ai-chat-input">
-    <input type="text" id="aiInput" placeholder="Ask about your resume, career, ATS..." onkeydown="if(event.key==='Enter')RF.sendAIMessage()">
+    <input type="text" id="aiInput" placeholder="Ask anything about your career…" onkeydown="if(event.key==='Enter'&amp;&amp;!event.shiftKey)RF.sendAIMessage()">
     <button class="btn btn-primary btn-sm" onclick="RF.sendAIMessage()">Send</button>
   </div>
 </div>
@@ -562,17 +626,17 @@
 </div>
 
 <!-- ===== SCRIPTS ===== -->
-<script src="js/config.js?v=5"></script>
-<script src="js/state.js?v=5"></script>
-<script src="js/ui.js?v=5"></script>
-<script src="js/security.js?v=5"></script>
-<script src="js/ai.js?v=5"></script>
-<script src="js/router.js?v=5"></script>
-<script src="js/pages.js?v=5"></script>
-<script src="js/models.js?v=5"></script>
-<script src="js/assistant.js?v=5"></script>
-<script src="js/app.js?v=5"></script>
-<script src="js/three-bg.js?v=5"></script>
+<script src="js/config.js?v=6"></script>
+<script src="js/state.js?v=6"></script>
+<script src="js/ui.js?v=6"></script>
+<script src="js/security.js?v=6"></script>
+<script src="js/ai.js?v=6"></script>
+<script src="js/router.js?v=6"></script>
+<script src="js/pages.js?v=6"></script>
+<script src="js/models.js?v=6"></script>
+<script src="js/assistant.js?v=6"></script>
+<script src="js/app.js?v=6"></script>
+<script src="js/three-bg.js?v=6"></script>
 <script>
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js').catch(function() {});

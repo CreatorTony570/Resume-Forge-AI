@@ -1,27 +1,35 @@
-/* ResumeForge AI — Page Renderers v5 */
+/* ResumeForge AI — Page Renderers v6 */
 window.RF = window.RF || {}; var RF = window.RF;
 
 /* ── helpers ── */
 RF._loading = function(elId, msg) {
-  var el = RF.el(elId); if (el) el.innerHTML = '<div class="ai-loading"><span class="ai-spinner"></span> ' + (msg||'AI is thinking…') + '</div>';
+  var el = RF.el(elId);
+  if (el) el.innerHTML = '<div class="ai-loading"><span class="ai-spinner"></span>' + (msg || 'AI is thinking…') + '</div>';
 };
+
 RF._md = function(text) {
   if (!text) return '';
   return text
-    .replace(/^## (.+)$/gm, '<h3 class="ai-h3">$1</h3>')
-    .replace(/^### (.+)$/gm, '<h4 class="ai-h4">$1</h4>')
-    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    .replace(/^• (.+)$/gm, '<li>$1</li>')
-    .replace(/^[\*\-] (.+)$/gm, '<li>$1</li>')
-    .replace(/^(\d+)\. (.+)$/gm, '<li><strong>$1.</strong> $2</li>')
-    .replace(/(<li>.*<\/li>\n?)+/g, function(m){ return '<ul class="ai-list">' + m + '</ul>'; })
-    .replace(/\n\n/g, '</p><p class="ai-p">')
-    .replace(/^(?!<[hul])(.+)$/gm, function(m){ return m ? '<p class="ai-p">' + m + '</p>' : ''; });
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/^#### (.+)$/gm,'<h5 class="ai-h4">$1</h5>')
+    .replace(/^### (.+)$/gm,'<h4 class="ai-h4">$1</h4>')
+    .replace(/^## (.+)$/gm,'<h3 class="ai-h3">$1</h3>')
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/`([^`]+)`/g,'<code class="ai-code">$1</code>')
+    .replace(/^• (.+)$/gm,'<li>$1</li>')
+    .replace(/^[\*\-] (.+)$/gm,'<li>$1</li>')
+    .replace(/^(\d+)\. (.+)$/gm,'<li class="ai-ol"><strong>$1.</strong> $2</li>')
+    .replace(/(<li[\s\S]*?<\/li>\n?)+/g,function(m){ return '<ul class="ai-list">' + m + '</ul>'; })
+    .replace(/\n{2,}/g,'</p><p class="ai-p">')
+    .replace(/^(?!<[hul])(.+)$/gm,function(m){ return m.trim() ? '<p class="ai-p">' + m + '</p>' : ''; });
 };
 
-/* ══════════════════════════════════════════
-   DASHBOARD
-══════════════════════════════════════════ */
+/* ── debounced preview updater ── */
+RF._previewTimer = null;
+RF._debouncedPreview = function() {
+  clearTimeout(RF._previewTimer);
+  RF._previewTimer = setTimeout(RF.updateResumePreview, 180);
+};
 RF.renderDashboard = function() {
   var rc = RF.State.resumes.length;
   if (RF.el('statResumeCount')) RF.el('statResumeCount').textContent = rc;
@@ -239,8 +247,11 @@ RF.updateResumePreview = function() {
 };
 
 RF.saveResume = function() {
+  var content  = RF.el('resumePreviewContent') ? RF.el('resumePreviewContent').innerHTML : '';
+  var fullText = RF.el('resumePreviewContent') ? (RF.el('resumePreviewContent').innerText || '') : '';
+  var atsScore = RF.scoreResume ? RF.scoreResume(fullText) : Math.floor(Math.random()*20)+72;
   var data = {
-    id: Date.now().toString(),
+    id:             Date.now().toString(),
     name:           (RF.el('resumeFullName')       && RF.el('resumeFullName').value       || 'Untitled').trim(),
     title:          (RF.el('resumeTitle')          && RF.el('resumeTitle').value          || '').trim(),
     email:          (RF.el('resumeEmail')          && RF.el('resumeEmail').value          || '').trim(),
@@ -251,13 +262,16 @@ RF.saveResume = function() {
     summary:        (RF.el('resumeSummary')        && RF.el('resumeSummary').value        || '').trim(),
     skills:         (RF.el('resumeSkills')         && RF.el('resumeSkills').value         || '').trim(),
     certifications: (RF.el('resumeCertifications') && RF.el('resumeCertifications').value || '').trim(),
-    updatedAt: new Date().toLocaleDateString(),
-    atsScore: Math.floor(Math.random() * 20) + 72,
-    content: RF.el('resumePreviewContent') ? RF.el('resumePreviewContent').innerHTML : ''
+    updatedAt:  new Date().toLocaleDateString(),
+    atsScore:   atsScore,
+    content:    content,
+    rawText:    fullText
   };
+  // Store as currentResumeText for use in AI tools
+  RF.State.currentResumeText = fullText;
   var existing = RF.State.resumes.findIndex(function(r){ return r.name === data.name; });
-  if (existing >= 0) { RF.State.resumes[existing] = data; RF.notify('Resume updated!', 'success'); }
-  else { RF.State.resumes.push(data); RF.notify('Resume saved!', 'success'); }
+  if (existing >= 0) { data.id = RF.State.resumes[existing].id; RF.State.resumes[existing] = data; RF.notify('Resume updated! ATS Score: ' + atsScore + '%', 'success'); }
+  else { RF.State.resumes.push(data); RF.notify('Resume saved! ATS Score: ' + atsScore + '%', 'success'); }
   RF.saveState();
   RF.renderDashboard();
 };
@@ -598,4 +612,116 @@ RF.selectTemplate = function(t) {
   RF.State.template = t; RF.saveState();
   RF.notify('Template "' + t + '" selected. Go to Resume Builder.','success');
   RF.navigate('resume-builder');
+};
+
+/* ══════════════════════════════════════════
+   JOB APPLICATION TRACKER
+══════════════════════════════════════════ */
+RF.renderJobTracker = function() {
+  var apps = RF.State.applications || [];
+  var stages = ['Wishlist','Applied','Phone Screen','Interview','Offer','Rejected'];
+  var counts = {}; stages.forEach(function(s){ counts[s] = 0; });
+  apps.forEach(function(a){ if (counts[a.stage] !== undefined) counts[a.stage]++; });
+
+  var statsEl = RF.el('trackerStats');
+  if (statsEl) {
+    statsEl.innerHTML = stages.map(function(s){
+      var colors = { Wishlist:'var(--text-muted)', Applied:'var(--info)', 'Phone Screen':'var(--warning)',
+        Interview:'var(--gold)', Offer:'var(--success)', Rejected:'var(--danger)' };
+      return '<div class="tracker-stat"><div class="tracker-stat-num" style="color:' + colors[s] + '">' + counts[s] + '</div><div class="tracker-stat-label">' + s + '</div></div>';
+    }).join('');
+  }
+
+  var listEl = RF.el('trackerList');
+  if (!listEl) return;
+  if (!apps.length) {
+    listEl.innerHTML = RF.renderEmptyState('No applications yet', 'Track every job you apply to. Never lose track of opportunities.',
+      [{ text: 'Add Application', cls: 'btn-primary', onclick: 'RF.openAddApplication()' }]);
+    return;
+  }
+
+  // Group by stage
+  var html = '';
+  stages.forEach(function(stage) {
+    var stageApps = apps.filter(function(a){ return a.stage === stage; });
+    if (!stageApps.length) return;
+    html += '<div class="tracker-stage-group"><div class="tracker-stage-title">' + stage + ' <span class="badge badge-neutral">' + stageApps.length + '</span></div>';
+    html += stageApps.map(function(a) {
+      return '<div class="tracker-card">' +
+        '<div class="tracker-card-main">' +
+          '<div class="tracker-card-role">' + (a.role||'Unknown Role') + '</div>' +
+          '<div class="tracker-card-company">' + (a.company||'') + (a.location ? ' · ' + a.location : '') + '</div>' +
+          '<div class="tracker-card-meta">' +
+            (a.salary ? '<span>💰 ' + a.salary + '</span>' : '') +
+            (a.appliedDate ? '<span>📅 ' + a.appliedDate + '</span>' : '') +
+            (a.url ? '<a href="' + a.url + '" target="_blank" rel="noopener">🔗 Link</a>' : '') +
+          '</div>' +
+          (a.notes ? '<div class="tracker-card-notes">' + a.notes + '</div>' : '') +
+        '</div>' +
+        '<div class="tracker-card-actions">' +
+          '<select class="form-select" style="font-size:0.75rem;padding:0.25rem 1.5rem 0.25rem 0.5rem" onchange="RF.updateAppStage(\'' + a.id + '\',this.value)">' +
+          stages.map(function(s){ return '<option value="' + s + '"' + (s===a.stage?' selected':'') + '>' + s + '</option>'; }).join('') +
+          '</select>' +
+          '<button class="btn btn-outline btn-sm" onclick="RF.prepInterviewForApp(\'' + a.id + '\')">🎤 Prep</button>' +
+          '<button class="btn btn-glass btn-sm btn-icon" onclick="RF.deleteApp(\'' + a.id + '\')">🗑</button>' +
+        '</div></div>';
+    }).join('');
+    html += '</div>';
+  });
+  listEl.innerHTML = html;
+};
+
+RF.openAddApplication = function() {
+  RF.showModal('Add Job Application',
+    '<div class="form-row"><div class="form-group"><label class="form-label">Role / Job Title *</label><input class="form-input" id="appRole" placeholder="e.g. Senior Engineer"></div>' +
+    '<div class="form-group"><label class="form-label">Company *</label><input class="form-input" id="appCompany" placeholder="e.g. Google"></div></div>' +
+    '<div class="form-row"><div class="form-group"><label class="form-label">Location</label><input class="form-input" id="appLocation" placeholder="e.g. Remote / NYC"></div>' +
+    '<div class="form-group"><label class="form-label">Salary Range</label><input class="form-input" id="appSalary" placeholder="e.g. $140k–$180k"></div></div>' +
+    '<div class="form-row"><div class="form-group"><label class="form-label">Job URL</label><input class="form-input" id="appUrl" placeholder="https://..."></div>' +
+    '<div class="form-group"><label class="form-label">Stage</label><select class="form-select" id="appStage"><option>Wishlist</option><option>Applied</option><option>Phone Screen</option><option>Interview</option><option>Offer</option></select></div></div>' +
+    '<div class="form-group"><label class="form-label">Notes</label><textarea class="form-textarea" id="appNotes" placeholder="Recruiter name, JD highlights, why you want this role..." style="min-height:60px"></textarea></div>',
+    [
+      { text: 'Cancel', cls: 'btn-glass' },
+      { text: 'Add Application', cls: 'btn-primary', action: function() {
+        var role = (RF.el('appRole') && RF.el('appRole').value || '').trim();
+        var company = (RF.el('appCompany') && RF.el('appCompany').value || '').trim();
+        if (!role || !company) { RF.notify('Role and company are required.', 'warning'); return; }
+        RF.State.applications.push({
+          id: Date.now().toString(),
+          role: role, company: company,
+          location: (RF.el('appLocation') && RF.el('appLocation').value || '').trim(),
+          salary:   (RF.el('appSalary')   && RF.el('appSalary').value   || '').trim(),
+          url:      (RF.el('appUrl')      && RF.el('appUrl').value      || '').trim(),
+          notes:    (RF.el('appNotes')    && RF.el('appNotes').value    || '').trim(),
+          stage:    (RF.el('appStage')    && RF.el('appStage').value    || 'Applied'),
+          appliedDate: new Date().toLocaleDateString()
+        });
+        RF.saveState();
+        RF.renderJobTracker();
+        RF.notify('Application added!', 'success');
+      }}
+    ]
+  );
+};
+
+RF.updateAppStage = function(id, stage) {
+  var app = RF.State.applications.find(function(a){ return a.id === id; });
+  if (app) { app.stage = stage; RF.saveState(); RF.renderJobTracker(); RF.notify('Status updated: ' + stage, 'info'); }
+};
+
+RF.deleteApp = function(id) {
+  RF.State.applications = RF.State.applications.filter(function(a){ return a.id !== id; });
+  RF.saveState(); RF.renderJobTracker(); RF.notify('Application removed.', 'info');
+};
+
+RF.prepInterviewForApp = function(id) {
+  var app = RF.State.applications.find(function(a){ return a.id === id; });
+  if (!app) return;
+  RF.navigate('interview-prep');
+  setTimeout(function() {
+    var jt = RF.el('interviewJob');
+    if (jt) jt.value = app.role + ' at ' + app.company + (app.notes ? '\n\nNotes: ' + app.notes : '');
+    var tt = RF.el('interviewType'); if (tt) tt.value = 'General / Mixed';
+    RF.notify('Job loaded into Interview Prep!', 'success');
+  }, 150);
 };

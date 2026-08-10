@@ -357,26 +357,58 @@ RF.callProvider = function(providerKey, userMessage, options) {
     });
 };
 
-/* ── Smart routing with fallback ── */
+/* ── Smart routing with routing-mode awareness and fallback ── */
 RF.callAI = function(userMessage, options) {
   options = options || {};
   var configured = RF.getConfiguredProviders();
   if (!configured.length) {
     return Promise.resolve({
       error: 'No AI provider configured.',
-      content: 'No AI provider is configured yet. Go to the API Key Manager in the sidebar (AI & Models → API Key Manager) to add your key. OpenRouter and Groq both offer free models to get started immediately.'
+      content: 'No AI provider is configured yet. Go to **API Key Manager** (sidebar → AI & Models → API Key Manager) to add your key. OpenRouter and Groq both have free models — no credit card needed.'
     });
   }
+
+  // Apply routing mode: sort providers by preference
+  var mode = (RF.State.settings && RF.State.settings.routingMode) || RF.State.routingMode || 'auto';
+  var ordered = configured.slice();
+
+  if (mode === 'speed') {
+    // Prefer Groq (ultra-fast) > OpenRouter free > Gemini Flash
+    var speedPriority = ['groq','gemini','openrouter','openai','anthropic','mistral','cohere'];
+    ordered.sort(function(a,b){ return speedPriority.indexOf(a) - speedPriority.indexOf(b); });
+  } else if (mode === 'quality') {
+    // Prefer Anthropic Claude > OpenAI GPT-4o > Gemini Pro
+    var qualityPriority = ['anthropic','openai','gemini','openrouter','mistral','cohere','groq'];
+    ordered.sort(function(a,b){ return qualityPriority.indexOf(a) - qualityPriority.indexOf(b); });
+  } else if (mode === 'economy') {
+    // Only use free models — filter out providers with no free models
+    var freeFirst = ordered.filter(function(k) {
+      var cfg = RF.PROVIDERS[k];
+      return cfg && cfg.freeModels && cfg.freeModels.length > 0;
+    });
+    if (freeFirst.length) ordered = freeFirst;
+    // Use freeModels[0] for economy mode
+    options._economyMode = true;
+  }
+
   var errors = [];
   function tryProvider(index) {
-    if (index >= configured.length) {
+    if (index >= ordered.length) {
       return Promise.resolve({
         error: 'All providers failed.',
-        content: 'All configured AI providers failed. Errors: ' + errors.join(' | ') + '. Please check your API keys.'
+        content: 'All configured AI providers failed. Errors: ' + errors.join(' | ') + '. Please check your API keys in the API Key Manager.'
       });
     }
-    var pk = configured[index];
-    return RF.callProvider(pk, userMessage, options)
+    var pk = ordered[index];
+    var providerOptions = Object.assign({}, options);
+    // Economy mode: use the cheapest/free model
+    if (options._economyMode) {
+      var cfg = RF.PROVIDERS[pk];
+      if (cfg && cfg.freeModels && cfg.freeModels.length) {
+        providerOptions.model = cfg.freeModels[0];
+      }
+    }
+    return RF.callProvider(pk, userMessage, providerOptions)
       .then(function(r) {
         if (r && r.content) return r;
         throw new Error(r.error || 'Empty response');

@@ -47,11 +47,15 @@ RF.renderPage = function(page) {
     case 'api-keys':           RF.renderAPIKeys();      break;
     case 'usage-analytics':    RF.renderUsage();        break;
     case 'resume-versions':    RF.renderVersions();     break;
+    case 'job-tracker':        RF.renderJobTracker();   break;
     case 'resume-templates':   break;
     case 'salary-negotiation': break;
     default: break;
   }
 };
+
+RF.PAGE_TITLES = RF.PAGE_TITLES || {};
+RF.PAGE_TITLES['job-tracker'] = 'Job Application Tracker';
 
 RF.initSidebar = function() {
   RF.qsa('.nav-item').forEach(function(item) {
