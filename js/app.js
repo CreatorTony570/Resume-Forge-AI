@@ -1,39 +1,47 @@
-/* ResumeForge AI — Main Application Entry */
+/* ResumeForge AI — Main Application Entry v5 */
 
 (function() {
   'use strict';
 
-  // Verify storage integrity on boot
+  // Ensure RF is globally available immediately for inline onclick handlers
+  window.RF = window.RF || {};
+
+  // Verify storage integrity
   RF.Security.verifyStorage();
 
   // Load persisted state
   RF.loadState();
 
-  // Apply saved settings
-  if (RF.State.settings.reduceMotion) document.body.classList.add('reduced-motion');
+  // Runtime-only state
+  RF.State.currentResumeText = '';
 
-  // Initialize subsystems — DOM is fully inline so everything is available immediately
+  // Apply saved settings
+  if (RF.State.settings && RF.State.settings.reduceMotion) {
+    document.body.classList.add('reduced-motion');
+  }
+
+  // Wire up sidebar, keyboard shortcuts, autosave
   RF.initSidebar();
   RF.initKeys();
   RF.autoSave();
   RF.updateAIStatus();
 
-  // Restore saved settings to form elements
+  // Restore settings form values
   var rmCheck = RF.el('settingReduceMotion');
-  if (rmCheck) rmCheck.checked = RF.State.settings.reduceMotion;
+  if (rmCheck) rmCheck.checked = !!(RF.State.settings && RF.State.settings.reduceMotion);
   var rmSelect = RF.el('settingRoutingMode');
-  if (rmSelect) rmSelect.value = RF.State.settings.routingMode;
+  if (rmSelect) rmSelect.value = (RF.State.settings && RF.State.settings.routingMode) || 'auto';
 
-  // Draw initial score rings and render dashboard
+  // Draw score rings and render dashboard after a short paint delay
   setTimeout(function() {
     RF.drawScoreRing('healthScoreCanvas', 'healthScoreValue', 0);
-    RF.drawScoreRing('atsScoreCanvas', 'atsOverallScore', 0);
+    RF.drawScoreRing('atsScoreCanvas',    'atsOverallScore',  0);
     RF.renderDashboard();
-  }, 50);
+  }, 60);
 
-  // Save on unload
+  // Save state before page unload
   window.addEventListener('beforeunload', RF.saveState);
 
-  // Expose globals for inline onclick handlers
+  // Re-expose RF globally (already on window, but be explicit)
   window.RF = RF;
 })();

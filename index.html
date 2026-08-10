@@ -87,6 +87,7 @@
         <button class="nav-item" data-page="skills-analyzer"><span class="nav-icon">🧩</span> Skills Analyzer</button>
         <button class="nav-item" data-page="interview-prep"><span class="nav-icon">🎤</span> Interview Prep</button>
         <button class="nav-item" data-page="linkedin-optimizer"><span class="nav-icon">💼</span> LinkedIn Optimizer</button>
+        <button class="nav-item" data-page="salary-negotiation"><span class="nav-icon">💰</span> Salary Negotiation</button>
       </div>
       <div class="nav-section"><div class="nav-section-title">AI &amp; Models</div>
         <button class="nav-item" data-page="ai-model-center"><span class="nav-icon">🧠</span> AI Model Center</button>
@@ -223,30 +224,40 @@
       <!-- ===== RESUME REVIEW ===== -->
       <div class="page-panel" id="page-resume-review">
         <h2 style="margin-bottom:1.5rem;font-size:1.2rem">Resume Review Engine</h2>
-        <div class="card mb-6">
+        <div class="card mb-4">
           <div class="upload-zone" onclick="document.getElementById('reviewFileInput').click()">
-            <div class="upload-icon">📤</div><div class="upload-text">Upload your resume for analysis</div>
-            <div class="upload-hint">PDF, DOCX, or TXT — Max 10MB</div>
+            <div class="upload-icon">📤</div>
+            <div class="upload-text">Upload resume (TXT, PDF, DOCX)</div>
+            <div class="upload-hint" id="reviewFileName">Max 10MB — or paste text below</div>
             <input type="file" id="reviewFileInput" accept=".pdf,.docx,.txt" style="display:none" onchange="RF.handleReviewUpload(event)">
           </div>
         </div>
+        <div class="card mb-4">
+          <div class="card-title mb-2">Or paste resume text directly</div>
+          <textarea class="form-textarea" id="reviewPasteArea" placeholder="Paste your full resume text here for instant AI analysis..." style="min-height:120px"></textarea>
+          <button class="btn btn-primary btn-sm" style="margin-top:0.75rem" onclick="RF.State.currentResumeText=(RF.el('reviewPasteArea').value||'').trim();RF.notify('Resume text loaded — click any AI analysis button below.','success');RF.el('reviewResults').style.display='grid'">📋 Load Pasted Text</button>
+        </div>
         <div class="grid grid-2" id="reviewResults" style="display:none">
-          <div class="card"><div class="card-title mb-4">Content Analysis</div><div id="contentAnalysis"></div></div>
-          <div class="card"><div class="card-title mb-4">Structure &amp; Formatting</div><div id="structureAnalysis"></div></div>
-          <div class="card"><div class="card-title mb-4">Language Quality</div><div id="languageAnalysis"></div></div>
-          <div class="card"><div class="card-title mb-4">ATS Compatibility</div><div id="atsAnalysis"></div></div>
+          <div class="card"><div class="card-title mb-3">📝 Content Analysis</div><div id="contentAnalysis"><p class="text-muted text-sm">Upload or paste resume to analyze.</p></div></div>
+          <div class="card"><div class="card-title mb-3">🏗️ Structure &amp; Formatting</div><div id="structureAnalysis"><p class="text-muted text-sm">Upload or paste resume to analyze.</p></div></div>
+          <div class="card"><div class="card-title mb-3">✍️ Language Quality</div><div id="languageAnalysis"><p class="text-muted text-sm">Upload or paste resume to analyze.</p></div></div>
+          <div class="card"><div class="card-title mb-3">🤖 ATS Compatibility</div><div id="atsAnalysis"><p class="text-muted text-sm">Upload or paste resume to analyze.</p></div></div>
         </div>
       </div>
 
       <!-- ===== ATS SCANNER ===== -->
       <div class="page-panel" id="page-ats-scanner">
-        <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center justify-between mb-4">
           <h2 style="font-size:1.2rem">ATS Scanner</h2>
-          <button class="btn btn-primary btn-sm" onclick="RF.runATSScan()">🔍 Run Scan</button>
+          <button class="btn btn-primary btn-sm" onclick="RF.runATSScan()">🔍 Run AI ATS Scan</button>
+        </div>
+        <div class="grid grid-2 mb-4">
+          <div class="card"><div class="card-title mb-2">Resume Text</div><textarea class="form-textarea" id="atsPasteResume" placeholder="Paste your resume text here (or upload in Resume Review first)..." style="min-height:140px"></textarea></div>
+          <div class="card"><div class="card-title mb-2">Job Description (optional — for targeted scan)</div><textarea class="form-textarea" id="atsJobDesc" placeholder="Paste the job description for a targeted ATS analysis..." style="min-height:140px"></textarea></div>
         </div>
         <div class="grid grid-2">
-          <div class="card stat-card"><div class="score-ring"><canvas id="atsScoreCanvas"></canvas><div class="score-ring-value" id="atsOverallScore">--</div></div><div class="stat-label">Overall ATS Score</div></div>
-          <div class="card"><div class="card-title mb-4">Score Breakdown</div><div id="atsBreakdown"><p class="text-muted text-sm">Run the scan to see results.</p></div></div>
+          <div class="card stat-card"><div class="score-ring"><canvas id="atsScoreCanvas"></canvas><div class="score-ring-value" id="atsOverallScore">--</div></div><div class="stat-label">ATS Score</div></div>
+          <div class="card" style="grid-column:span 1"><div class="card-title mb-3">AI ATS Analysis</div><div id="atsBreakdown"><p class="text-muted text-sm">Run the scan to see your detailed ATS report.</p></div></div>
         </div>
       </div>
 
@@ -265,71 +276,113 @@
 
       <!-- ===== RESUME OPTIMIZER ===== -->
       <div class="page-panel" id="page-resume-optimizer">
-        <div class="flex items-center justify-between mb-6"><h2 style="font-size:1.2rem">Resume Optimizer</h2><button class="btn btn-primary btn-sm" onclick="RF.runOptimizer()">⚡ Optimize</button></div>
-        <div class="card mb-6"><div class="card-title mb-3">Current Resume</div><textarea class="form-textarea" id="optimizerResume" placeholder="Paste resume..." style="min-height:140px"></textarea></div>
-        <div class="card mb-6"><div class="card-title mb-3">Target Job (Optional)</div><textarea class="form-textarea" id="optimizerJob" placeholder="Paste job description..." style="min-height:90px"></textarea></div>
-        <div class="card" id="optimizerResults" style="display:none"><div class="card-title mb-4">Optimized Resume</div><div id="optimizerOutput"></div></div>
+        <div class="flex items-center justify-between mb-4"><h2 style="font-size:1.2rem">Resume Optimizer</h2><button class="btn btn-primary btn-sm" onclick="RF.runOptimizer()">⚡ Full AI Optimization</button></div>
+        <div class="grid grid-2 mb-4">
+          <div class="card"><div class="card-title mb-2">Current Resume</div><textarea class="form-textarea" id="optimizerResume" placeholder="Paste your current resume text for a comprehensive optimization analysis..." style="min-height:180px"></textarea></div>
+          <div class="card">
+            <div class="form-group"><label class="form-label">Target Job Description (optional)</label><textarea class="form-textarea" id="optimizerJob" placeholder="Paste a job description to tailor the optimization to a specific role..." style="min-height:100px"></textarea></div>
+            <div class="form-group"><label class="form-label">Target Role</label><input class="form-input" id="optimizerRole" placeholder="e.g. Senior Software Engineer at Amazon"></div>
+          </div>
+        </div>
+        <div class="card" id="optimizerResults" style="display:none">
+          <div class="card-title mb-3">⚡ Full Optimization Report</div>
+          <div id="optimizerOutput"><p class="text-muted text-sm">Optimization report will appear here.</p></div>
+        </div>
       </div>
 
       <!-- ===== COVER LETTER ===== -->
       <div class="page-panel" id="page-cover-letter">
-        <div class="flex items-center justify-between mb-6"><h2 style="font-size:1.2rem">Cover Letter Generator</h2><button class="btn btn-primary btn-sm" onclick="RF.generateCoverLetter()">✉️ Generate</button></div>
-        <div class="grid grid-2 mb-6">
-          <div class="card"><div class="card-title mb-3">Resume</div><textarea class="form-textarea" id="coverResume" placeholder="Paste your resume..." style="min-height:140px"></textarea></div>
-          <div class="card"><div class="card-title mb-3">Job Details</div>
-            <div class="form-group"><label class="form-label">Job Description</label><textarea class="form-textarea" id="coverJob" placeholder="Paste job description..." style="min-height:100px"></textarea></div>
-            <div class="form-group"><label class="form-label">Company</label><input class="form-input" id="coverCompany" placeholder="e.g., Google"></div>
+        <div class="flex items-center justify-between mb-4"><h2 style="font-size:1.2rem">Cover Letter Generator</h2><button class="btn btn-primary btn-sm" onclick="RF.generateCoverLetter()">✉️ Generate Letter</button></div>
+        <div class="grid grid-2 mb-4">
+          <div class="card"><div class="card-title mb-2">Your Resume</div><textarea class="form-textarea" id="coverResume" placeholder="Paste your resume for a highly personalized cover letter using your real achievements..." style="min-height:180px"></textarea></div>
+          <div class="card">
+            <div class="form-group"><label class="form-label">Job Description</label><textarea class="form-textarea" id="coverJob" placeholder="Paste the job description..." style="min-height:100px"></textarea></div>
+            <div class="form-row">
+              <div class="form-group"><label class="form-label">Company</label><input class="form-input" id="coverCompany" placeholder="e.g. Google, Microsoft"></div>
+              <div class="form-group"><label class="form-label">Tone</label>
+                <select class="form-select" id="coverTone">
+                  <option>Professional and confident</option>
+                  <option>Enthusiastic and energetic</option>
+                  <option>Formal and executive</option>
+                  <option>Conversational and warm</option>
+                  <option>Concise and direct</option>
+                </select>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="card" id="coverLetterResult" style="display:none"><div class="card-title mb-4">Your Cover Letter</div><div id="coverLetterOutput"></div></div>
+        <div class="card" id="coverLetterResult" style="display:none">
+          <div class="card-title mb-3">✉️ Your Cover Letter</div>
+          <div id="coverLetterOutput"><p class="text-muted text-sm">Letter will appear here.</p></div>
+        </div>
       </div>
 
       <!-- ===== JOB ANALYZER ===== -->
       <div class="page-panel" id="page-job-analyzer">
-        <div class="flex items-center justify-between mb-6"><h2 style="font-size:1.2rem">Job Description Analyzer</h2><button class="btn btn-primary btn-sm" onclick="RF.analyzeJobDesc()">📋 Analyze</button></div>
-        <div class="card mb-6"><textarea class="form-textarea" id="jobDescInput" placeholder="Paste job description here..." style="min-height:180px"></textarea></div>
-        <div class="grid grid-2" id="jobAnalysisResults" style="display:none">
-          <div class="card"><div class="card-title mb-2">Required Skills</div><div id="jobRequiredSkills"></div></div>
-          <div class="card"><div class="card-title mb-2">Preferred Skills</div><div id="jobPreferredSkills"></div></div>
-          <div class="card"><div class="card-title mb-2">Key Keywords</div><div id="jobKeywords"></div></div>
-          <div class="card"><div class="card-title mb-2">Implicit Requirements</div><div id="jobImplicit"></div></div>
+        <div class="flex items-center justify-between mb-4"><h2 style="font-size:1.2rem">Job Description Analyzer</h2><button class="btn btn-primary btn-sm" onclick="RF.analyzeJobDesc()">🔍 Deep Analyze</button></div>
+        <div class="card mb-4"><div class="card-title mb-2">Paste Job Description</div><textarea class="form-textarea" id="jobDescInput" placeholder="Paste the full job description here for a comprehensive AI breakdown — required skills, hidden requirements, ATS keywords, salary estimate, culture signals, and red flags..." style="min-height:200px"></textarea></div>
+        <div id="jobAnalysisResults" style="display:none">
+          <div class="card"><div class="card-title mb-3">🔬 Full AI Analysis</div><div id="jobAnalysisContent"><p class="text-muted text-sm">Analysis will appear here.</p></div></div>
         </div>
       </div>
 
       <!-- ===== SKILLS ANALYZER ===== -->
       <div class="page-panel" id="page-skills-analyzer">
-        <div class="flex items-center justify-between mb-6"><h2 style="font-size:1.2rem">Skills Gap Analyzer</h2><button class="btn btn-primary btn-sm" onclick="RF.analyzeSkillsGap()">🧩 Analyze</button></div>
-        <div class="grid grid-2 mb-6">
-          <div class="card"><div class="card-title mb-3">Current Skills</div><textarea class="form-textarea" id="skillsCurrent" placeholder="List your skills..." style="min-height:140px"></textarea></div>
-          <div class="card"><div class="card-title mb-3">Target Job Skills</div><textarea class="form-textarea" id="skillsTarget" placeholder="Required skills from job..." style="min-height:140px"></textarea></div>
+        <div class="flex items-center justify-between mb-4"><h2 style="font-size:1.2rem">Skills Gap Analyzer</h2><button class="btn btn-primary btn-sm" onclick="RF.analyzeSkillsGap()">🧩 Analyze Gap</button></div>
+        <div class="grid grid-2 mb-4">
+          <div class="card"><div class="card-title mb-2">Your Current Skills &amp; Experience</div><textarea class="form-textarea" id="skillsCurrent" placeholder="List your skills, technologies, tools, and experience level (e.g. Python 3yrs, React 2yrs, AWS beginner)..." style="min-height:150px"></textarea></div>
+          <div class="card">
+            <div class="card-title mb-2">Target Role</div>
+            <input class="form-input mb-3" id="skillsRole" placeholder="e.g. Senior Full Stack Engineer at Google">
+            <div class="card-title mb-2">Job Requirements (optional)</div>
+            <textarea class="form-textarea" id="skillsTarget" placeholder="Paste required skills or full job description for precise gap analysis..." style="min-height:100px"></textarea>
+          </div>
         </div>
-        <div class="grid grid-3" id="skillsResults" style="display:none">
-          <div class="card"><div class="card-title mb-2">✅ Strong Matches</div><div id="skillsStrong"></div></div>
-          <div class="card"><div class="card-title mb-2">⚠️ Missing</div><div id="skillsMissing"></div></div>
-          <div class="card"><div class="card-title mb-2">📚 Learn</div><div id="skillsRecommended"></div></div>
+        <div id="skillsResults" style="display:none">
+          <div class="card"><div class="card-title mb-3">📊 Skills Gap Analysis</div><div id="skillsContent"><p class="text-muted text-sm">Analysis will appear here.</p></div></div>
         </div>
       </div>
 
       <!-- ===== INTERVIEW PREP ===== -->
       <div class="page-panel" id="page-interview-prep">
-        <div class="flex items-center justify-between mb-6"><h2 style="font-size:1.2rem">Interview Preparation</h2><button class="btn btn-primary btn-sm" onclick="RF.generateInterviewPrep()">🎤 Generate</button></div>
-        <div class="grid grid-2 mb-6">
-          <div class="card"><div class="card-title mb-3">Resume</div><textarea class="form-textarea" id="interviewResume" placeholder="Paste your resume..." style="min-height:140px"></textarea></div>
-          <div class="card"><div class="card-title mb-3">Job Description (Optional)</div><textarea class="form-textarea" id="interviewJob" placeholder="Paste job description..." style="min-height:140px"></textarea></div>
+        <div class="flex items-center justify-between mb-4"><h2 style="font-size:1.2rem">Interview Preparation Coach</h2><button class="btn btn-primary btn-sm" onclick="RF.generateInterviewPrep()">🎤 Generate Guide</button></div>
+        <div class="grid grid-2 mb-4">
+          <div class="card"><div class="card-title mb-2">Your Resume</div><textarea class="form-textarea" id="interviewResume" placeholder="Paste your resume for personalized questions based on your actual experience..." style="min-height:140px"></textarea></div>
+          <div class="card">
+            <div class="card-title mb-2">Job Description (optional)</div>
+            <textarea class="form-textarea" id="interviewJob" placeholder="Paste job description for role-specific questions..." style="min-height:100px"></textarea>
+            <div class="form-group" style="margin-top:0.75rem">
+              <label class="form-label">Interview Type</label>
+              <select class="form-select" id="interviewType">
+                <option value="General / Mixed">General / Mixed</option>
+                <option value="Technical / Engineering">Technical / Engineering</option>
+                <option value="Behavioral / Culture Fit">Behavioral / Culture Fit</option>
+                <option value="Product Management">Product Management</option>
+                <option value="Design / UX">Design / UX</option>
+                <option value="Sales / Business Development">Sales / Business Development</option>
+                <option value="Executive / Leadership">Executive / Leadership</option>
+                <option value="Data Science / Analytics">Data Science / Analytics</option>
+              </select>
+            </div>
+          </div>
         </div>
-        <div class="grid grid-2" id="interviewResults" style="display:none">
-          <div class="card"><div class="card-title mb-2">Technical Questions</div><div id="interviewTechnical"></div></div>
-          <div class="card"><div class="card-title mb-2">Behavioral Questions</div><div id="interviewBehavioral"></div></div>
+        <div id="interviewResults" style="display:none">
+          <div class="card"><div class="card-title mb-3">🎯 Your Personalized Interview Guide</div><div id="interviewContent"><p class="text-muted text-sm">Guide will appear here.</p></div></div>
         </div>
       </div>
 
       <!-- ===== LINKEDIN OPTIMIZER ===== -->
       <div class="page-panel" id="page-linkedin-optimizer">
-        <div class="flex items-center justify-between mb-6"><h2 style="font-size:1.2rem">LinkedIn Profile Optimizer</h2><button class="btn btn-primary btn-sm" onclick="RF.generateLinkedIn()">💼 Generate</button></div>
-        <div class="card mb-6"><div class="card-title mb-3">Your Background</div><textarea class="form-textarea" id="linkedinResume" placeholder="Paste your resume or background..." style="min-height:140px"></textarea></div>
-        <div class="grid grid-2" id="linkedinResults" style="display:none">
-          <div class="card"><div class="card-title mb-2">Headline</div><div id="linkedinHeadline"></div></div>
-          <div class="card"><div class="card-title mb-2">About Section</div><div id="linkedinAbout"></div></div>
+        <div class="flex items-center justify-between mb-4"><h2 style="font-size:1.2rem">LinkedIn Profile Optimizer</h2><button class="btn btn-primary btn-sm" onclick="RF.generateLinkedIn()">💼 Optimize Profile</button></div>
+        <div class="grid grid-2 mb-4">
+          <div class="card"><div class="card-title mb-2">Your Resume / Background</div><textarea class="form-textarea" id="linkedinResume" placeholder="Paste your resume or describe your background, experience, and key achievements..." style="min-height:180px"></textarea></div>
+          <div class="card">
+            <div class="form-group"><label class="form-label">Target Role / Industry</label><input class="form-input" id="linkedinRole" placeholder="e.g. Senior Product Manager in Fintech"></div>
+            <div class="form-group"><label class="form-label">What makes you unique?</label><textarea class="form-textarea" id="linkedinUnique" placeholder="Any specific achievements, projects, or differentiators to highlight..." style="min-height:100px"></textarea></div>
+          </div>
+        </div>
+        <div id="linkedinResults" style="display:none">
+          <div class="card"><div class="card-title mb-3">🚀 Your LinkedIn Optimization Report</div><div id="linkedinContent"><p class="text-muted text-sm">Optimization will appear here.</p></div></div>
         </div>
       </div>
 
@@ -350,6 +403,26 @@
       <div class="page-panel" id="page-resume-versions">
         <div class="flex items-center justify-between mb-6"><h2 style="font-size:1.2rem">Resume Versions</h2><button class="btn btn-glass btn-sm" onclick="RF.saveResumeVersion()">💾 Save Current</button></div>
         <div id="versionList"><div class="empty-state"><div class="empty-state-icon">🔄</div><div class="empty-state-title">No versions yet</div><div class="empty-state-desc">Save versions of your resume to track changes over time.</div></div></div>
+      </div>
+
+      <!-- ===== SALARY NEGOTIATION ===== -->
+      <div class="page-panel" id="page-salary-negotiation">
+        <div class="flex items-center justify-between mb-4"><h2 style="font-size:1.2rem">Salary Negotiation Coach</h2><button class="btn btn-primary btn-sm" onclick="RF.runSalaryNegotiation()">💰 Get Strategy</button></div>
+        <div class="grid grid-2 mb-4">
+          <div class="card">
+            <div class="form-group"><label class="form-label">Job Role / Title</label><input class="form-input" id="salaryRole" placeholder="e.g. Senior Software Engineer"></div>
+            <div class="form-group"><label class="form-label">Location</label><input class="form-input" id="salaryLoc" placeholder="e.g. San Francisco, CA / Remote"></div>
+            <div class="form-group"><label class="form-label">Years of Experience</label><input class="form-input" id="salaryExp" placeholder="e.g. 5 years"></div>
+          </div>
+          <div class="card">
+            <div class="form-group"><label class="form-label">Current / Offered Salary</label><input class="form-input" id="salaryCurrent" placeholder="e.g. $120,000 base"></div>
+            <div class="form-group"><label class="form-label">Target Salary</label><input class="form-input" id="salaryTarget" placeholder="e.g. $150,000 + equity"></div>
+            <div class="form-group"><label class="form-label">Notes (competing offers, leverage, etc.)</label><textarea class="form-textarea" id="salaryNotes" placeholder="Any competing offers, unique skills, relocation, etc..." style="min-height:70px"></textarea></div>
+          </div>
+        </div>
+        <div id="salaryResults" style="display:none">
+          <div class="card"><div class="card-title mb-3">💰 Your Negotiation Strategy</div><div id="salaryContent"><p class="text-muted text-sm">Strategy will appear here.</p></div></div>
+        </div>
       </div>
 
       <!-- ===== AI MODEL CENTER ===== -->
@@ -489,17 +562,17 @@
 </div>
 
 <!-- ===== SCRIPTS ===== -->
-<script src="js/config.js?v=4"></script>
-<script src="js/state.js?v=4"></script>
-<script src="js/ui.js?v=4"></script>
-<script src="js/security.js?v=4"></script>
-<script src="js/ai.js?v=4"></script>
-<script src="js/router.js?v=4"></script>
-<script src="js/pages.js?v=4"></script>
-<script src="js/models.js?v=4"></script>
-<script src="js/assistant.js?v=4"></script>
-<script src="js/app.js?v=4"></script>
-<script src="js/three-bg.js?v=4"></script>
+<script src="js/config.js?v=5"></script>
+<script src="js/state.js?v=5"></script>
+<script src="js/ui.js?v=5"></script>
+<script src="js/security.js?v=5"></script>
+<script src="js/ai.js?v=5"></script>
+<script src="js/router.js?v=5"></script>
+<script src="js/pages.js?v=5"></script>
+<script src="js/models.js?v=5"></script>
+<script src="js/assistant.js?v=5"></script>
+<script src="js/app.js?v=5"></script>
+<script src="js/three-bg.js?v=5"></script>
 <script>
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js').catch(function() {});

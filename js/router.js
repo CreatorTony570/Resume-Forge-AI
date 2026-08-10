@@ -40,14 +40,15 @@ RF.enterApp = function(page) {
 
 RF.renderPage = function(page) {
   switch (page) {
-    case 'dashboard':        RF.renderDashboard();    break;
-    case 'resume-builder':   RF.renderResumeBuilder(); break;
-    case 'ats-scanner':      RF.drawScoreRing('atsScoreCanvas', 'atsOverallScore', 0); break;
-    case 'ai-model-center':  RF.renderModelCenter();  break;
-    case 'api-keys':         RF.renderAPIKeys();      break;
-    case 'usage-analytics':  RF.renderUsage();        break;
-    case 'resume-versions':  RF.renderVersions();     break;
-    case 'resume-templates': break;
+    case 'dashboard':          RF.renderDashboard();    break;
+    case 'resume-builder':     RF.renderResumeBuilder(); break;
+    case 'ats-scanner':        RF.drawScoreRing('atsScoreCanvas', 'atsOverallScore', 0); break;
+    case 'ai-model-center':    RF.renderModelCenter();  break;
+    case 'api-keys':           RF.renderAPIKeys();      break;
+    case 'usage-analytics':    RF.renderUsage();        break;
+    case 'resume-versions':    RF.renderVersions();     break;
+    case 'resume-templates':   break;
+    case 'salary-negotiation': break;
     default: break;
   }
 };

@@ -14,7 +14,8 @@ RF.State = {
   template: 'modern',
   expCount: 0,
   eduCount: 0,
-  projCount: 0
+  projCount: 0,
+  currentResumeText: ''
 };
 
 RF.loadState = function() {

@@ -120,21 +120,14 @@ RF.removeAPIKey = function(key) {
 RF.testAPIKey = function(key) {
   var saved = RF.State.providers[key];
   var cfg = RF.PROVIDERS[key];
-  if (!saved?.apiKey) { RF.notify('Save a key first.', 'warning'); return; }
-  RF.notify('Testing '+(cfg?.name||key)+'...', 'info');
-  var headers = {'Content-Type':'application/json'};
-  if (key==='openai'||key==='openrouter'||key==='groq') headers['Authorization'] = 'Bearer '+saved.apiKey;
-  else if (key==='anthropic') { headers['x-api-key']=saved.apiKey; headers['anthropic-version']='2023-06-01'; }
-  var body = key==='gemini' ? null : JSON.stringify({model:cfg.models[0],messages:[{role:'user',content:'test'}],max_tokens:5});
-  var url = key==='gemini' ? cfg.baseUrl+'/models/'+cfg.models[0]+':generateContent?key='+saved.apiKey : cfg.baseUrl+'/chat/completions';
-  var method = key==='gemini'?'GET':'POST';
-  fetch(url, {method:method,headers:headers,body:body})
+  if (!saved || !saved.apiKey) { RF.notify('Save a key first.', 'warning'); return; }
+  RF.notify('Testing ' + (cfg ? cfg.name : key) + '...', 'info');
+  RF.callProvider(key, 'Hello', { maxTokens: 5 })
     .then(function(r) {
-      if (r.ok) { RF.notify(cfg.name+' connected!', 'success'); RF.logUsage(key,cfg.models[0],true); }
-      else if (r.status===401||r.status===403) RF.notify(cfg.name+': Invalid key.', 'error');
-      else RF.notify(cfg.name+': Error '+r.status, 'error');
+      if (r && r.content) { RF.notify((cfg ? cfg.name : key) + ' ✅ Connected!', 'success'); }
+      else { RF.notify((cfg ? cfg.name : key) + ': Unexpected response', 'warning'); }
     })
-    .catch(function() { RF.notify(cfg.name+': Connection failed.', 'error'); });
+    .catch(function(err) { RF.notify((cfg ? cfg.name : key) + ': ' + (err.message||'Failed'), 'error'); });
 };
 
 RF.testAllProviders = function() {

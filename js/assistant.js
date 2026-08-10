@@ -17,27 +17,34 @@ RF.sendAIMessage = function() {
   if (!msg) return;
   RF.appendAIMessage('user', msg);
   input.value = '';
-  RF.appendAIMessage('assistant', 'Thinking...');
-  var msgs = RF.el('aiMessages');
-  var thinkEl = msgs.lastElementChild;
 
-  RF.callAI(msg).then(function(r) {
-    // r.content has the AI response, r.error is set if all providers failed
-    if (r.error && !r.content) {
-      thinkEl.textContent = r.error;
-    } else if (r.content) {
-      thinkEl.textContent = r.content;
-      // Show which provider was used
-      if (r.provider) {
-        thinkEl.textContent += '\n\n— ' + r.provider + ' / ' + (r.model || 'auto');
+  // Build context from current page and resume
+  var context = 'Current page: ' + (RF.currentPage || 'dashboard') + '.';
+  if (RF.State.currentResumeText) context += ' User has a resume loaded (' + RF.State.currentResumeText.split(/\s+/).length + ' words).';
+  if (RF.State.resumes && RF.State.resumes.length) context += ' User has ' + RF.State.resumes.length + ' saved resume(s).';
+
+  var thinkDiv = document.createElement('div');
+  thinkDiv.className = 'ai-chat-msg assistant';
+  thinkDiv.innerHTML = '<span class="ai-spinner" style="display:inline-block;width:12px;height:12px;border:2px solid rgba(255,255,255,0.1);border-top-color:var(--gold);border-radius:50%;animation:spin 0.7s linear infinite"></span> Thinking…';
+  RF.el('aiMessages').appendChild(thinkDiv);
+  RF.el('aiMessages').scrollTop = RF.el('aiMessages').scrollHeight;
+
+  RF.callAI(msg, { systemPrompt: RF.Prompts.general(context), maxTokens: 2048 })
+    .then(function(r) {
+      var content = (r && r.content) ? r.content : (r && r.error ? r.error : 'No response received.');
+      // Render markdown in chat
+      thinkDiv.innerHTML = RF._md ? RF._md(content) : content;
+      if (r && r.provider) {
+        var meta = document.createElement('div');
+        meta.style.cssText = 'font-size:0.68rem;color:var(--text-muted);margin-top:0.4rem;opacity:0.7';
+        meta.textContent = '— ' + r.provider + ' / ' + (r.model || 'auto');
+        thinkDiv.appendChild(meta);
       }
-    } else {
-      thinkEl.textContent = 'Received an empty response. Please try again.';
-    }
-    msgs.scrollTop = msgs.scrollHeight;
-  }).catch(function() {
-    thinkEl.textContent = 'Connection error. Check that your API keys are valid in the API Key Manager.';
-  });
+      RF.el('aiMessages').scrollTop = RF.el('aiMessages').scrollHeight;
+    })
+    .catch(function() {
+      thinkDiv.textContent = 'Connection error. Check your API keys in the API Key Manager.';
+    });
 };
 
 RF.sendAISuggestion = function(text) {
