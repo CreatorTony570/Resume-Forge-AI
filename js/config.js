@@ -53,11 +53,11 @@ RF.PROVIDERS = {
     baseUrl: 'https://openrouter.ai/api/v1',
     models: [
       /* ── FREE TIER (verified IDs August 2026) ── */
+      'meta-llama/llama-3.1-8b-instruct:free',
       'openrouter/free',
       'google/gemma-4-31b-it:free',
       'google/gemma-4-26b-a4b-it:free',
       'meta-llama/llama-3.2-3b-instruct:free',
-      'meta-llama/llama-3.1-8b-instruct:free',
       'meta-llama/llama-3.2-1b-instruct:free',
       'mistralai/mistral-small-24b-instruct-2501',
       'qwen/qwen3-8b',
@@ -89,11 +89,11 @@ RF.PROVIDERS = {
       'openrouter/auto'
     ],
     freeModels: [
+      'meta-llama/llama-3.1-8b-instruct:free',
       'openrouter/free',
       'google/gemma-4-31b-it:free',
       'google/gemma-4-26b-a4b-it:free',
       'meta-llama/llama-3.2-3b-instruct:free',
-      'meta-llama/llama-3.1-8b-instruct:free',
       'meta-llama/llama-3.2-1b-instruct:free',
       'mistralai/mistral-small-24b-instruct-2501',
       'qwen/qwen3-8b',

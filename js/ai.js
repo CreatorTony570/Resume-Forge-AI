@@ -310,19 +310,56 @@ RF.callProvider = function(providerKey, userMessage, options) {
       contents: [{ role: 'user', parts: [{ text: systemPrompt + '\n\nUser: ' + userMessage }] }],
       generationConfig: { temperature: temperature, maxOutputTokens: maxTokens }
     });
+
   } else if (providerKey === 'anthropic') {
     url = cfg.baseUrl + '/messages';
     headers = { 'Content-Type': 'application/json', 'x-api-key': saved.apiKey, 'anthropic-version': '2023-06-01' };
     body = JSON.stringify({ model: model, max_tokens: maxTokens, temperature: temperature, system: systemPrompt, messages: [{ role: 'user', content: userMessage }] });
+
   } else if (providerKey === 'cohere') {
     url = cfg.baseUrl + '/chat';
     headers = { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + saved.apiKey };
     body = JSON.stringify({ model: model, message: userMessage, preamble: systemPrompt, temperature: temperature, max_tokens: maxTokens });
+
   } else {
+    // OpenAI, OpenRouter, Groq, Mistral (all OpenAI-compatible)
     url = cfg.baseUrl + '/chat/completions';
     headers = { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + saved.apiKey };
-    if (providerKey === 'openrouter') { headers['HTTP-Referer'] = window.location.origin; headers['X-Title'] = 'ResumeForge AI'; }
-    body = JSON.stringify({ model: model, temperature: temperature, max_tokens: maxTokens, messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: userMessage }] });
+    if (providerKey === 'openrouter') {
+      headers['HTTP-Referer'] = window.location.origin;
+      headers['X-Title'] = 'ResumeForge AI';
+    }
+
+    // Some OpenRouter models are routers/reasoning models that reject temperature.
+    // Build body conservatively — only include temperature for safe models.
+    var noTempModels = [
+      'openrouter/free', 'openrouter/auto', 'openrouter/auto-beta',
+      'openrouter/fusion', 'openrouter/pareto-code'
+    ];
+    var isReasoningModel = model && (
+      model.indexOf('thinking') >= 0 ||
+      model.indexOf('reasoning') >= 0 ||
+      model.indexOf(':free') >= 0 ||
+      model.indexOf('qwen3') >= 0 ||
+      model.indexOf('deepseek-r1') >= 0 ||
+      model.indexOf('o1') >= 0 ||
+      model.indexOf('o3') >= 0 ||
+      model.indexOf('o4') >= 0
+    );
+    var skipTemp = noTempModels.indexOf(model) >= 0 || isReasoningModel;
+
+    var payload = {
+      model: model,
+      max_tokens: maxTokens,
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userMessage }
+      ]
+    };
+    if (!skipTemp) {
+      payload.temperature = temperature;
+    }
+    body = JSON.stringify(payload);
   }
 
   var startTime = Date.now();
@@ -330,10 +367,26 @@ RF.callProvider = function(providerKey, userMessage, options) {
     .then(function(response) {
       var elapsed = Date.now() - startTime;
       if (!response.ok) {
-        return response.text().then(function() {
-          var errMsg = response.status === 401 || response.status === 403 ? 'Invalid API key for ' + cfg.name :
-            response.status === 429 ? cfg.name + ' rate limit — try again shortly' :
-            response.status >= 500 ? cfg.name + ' server error' : 'HTTP ' + response.status;
+        return response.text().then(function(errBody) {
+          var errMsg;
+          if (response.status === 400) {
+            // Parse OpenRouter error detail if available
+            try {
+              var parsed = JSON.parse(errBody);
+              var detail = (parsed.error && (parsed.error.message || parsed.error)) || errBody;
+              errMsg = cfg.name + ': Bad request — ' + String(detail).slice(0, 120);
+            } catch(e) {
+              errMsg = cfg.name + ': Bad request (HTTP 400)';
+            }
+          } else if (response.status === 401 || response.status === 403) {
+            errMsg = 'Invalid API key for ' + cfg.name;
+          } else if (response.status === 429) {
+            errMsg = cfg.name + ' rate limit — try again shortly';
+          } else if (response.status >= 500) {
+            errMsg = cfg.name + ' server error';
+          } else {
+            errMsg = cfg.name + ': HTTP ' + response.status;
+          }
           RF.logUsage(providerKey, model, false, response.status, errMsg);
           throw new Error(errMsg);
         });
@@ -344,13 +397,16 @@ RF.callProvider = function(providerKey, userMessage, options) {
     .then(function(data) {
       var content = '';
       if (providerKey === 'gemini') {
-        content = (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0] && data.candidates[0].content.parts[0].text) || '';
+        content = (data.candidates && data.candidates[0] && data.candidates[0].content &&
+                   data.candidates[0].content.parts && data.candidates[0].content.parts[0] &&
+                   data.candidates[0].content.parts[0].text) || '';
       } else if (providerKey === 'anthropic') {
         content = (data.content && data.content[0] && data.content[0].text) || '';
       } else if (providerKey === 'cohere') {
         content = data.text || '';
       } else {
-        content = (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) || '';
+        content = (data.choices && data.choices[0] && data.choices[0].message &&
+                   data.choices[0].message.content) || '';
       }
       if (!content) throw new Error(cfg.name + ' returned empty response');
       return { content: content.trim(), provider: cfg.name, model: model };
